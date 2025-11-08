@@ -108,6 +108,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # AWS_QUERYSTRING_AUTH = False
 
 # Logging - Production configuration
+# Create logs directory if it doesn't exist
+import os
+LOGS_DIR = os.environ.get('LOGS_DIR', str(BASE_DIR / 'logs'))
+os.makedirs(LOGS_DIR, exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -133,14 +138,14 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/django/motivational_app.log',
+            'filename': os.path.join(LOGS_DIR, 'django.log'),
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 10,
             'formatter': 'verbose',
         },
         'error_file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/django/error.log',
+            'filename': os.path.join(LOGS_DIR, 'error.log'),
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 10,
             'formatter': 'verbose',
@@ -159,7 +164,7 @@ LOGGING = {
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['error_file', 'mail_admins'],
+            'handlers': ['console', 'error_file', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
         },
