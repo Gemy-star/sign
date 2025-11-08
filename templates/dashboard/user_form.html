@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}تعديل مستخدم{% else %}إضافة مستخدم جديد{% endif %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-section {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .form-section h3 {
+        color: #667eea;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1);
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+
+    .form-check-label {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .required-mark {
+        color: #dc3545;
+        margin-right: 3px;
+    }
+
+    .help-text {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas {% if is_edit %}fa-user-edit{% else %}fa-user-plus{% endif %}"></i>
+                {% if is_edit %}تعديل مستخدم{% else %}إضافة مستخدم جديد{% endif %}
+            </h1>
+            <p class="page-subtitle">
+                {% if is_edit %}
+                    تحديث بيانات المستخدم: {{ user_obj.username }}
+                {% else %}
+                    إنشاء حساب مستخدم جديد في النظام
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            <a href="{% if is_edit %}{% url 'dashboard:user_detail' user_obj.id %}{% else %}{% url 'dashboard:users' %}{% endif %}" class="btn btn-outline">
+                <i class="fas fa-arrow-right"></i> إلغاء
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="form-card">
+    <form method="post" id="userForm">
+        {% csrf_token %}
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-user ms-2"></i>
+                المعلومات الأساسية
+            </h3>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label">
+                        <span class="required-mark">*</span>
+                        اسم المستخدم
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="username"
+                           name="username"
+                           value="{% if is_edit %}{{ user_obj.username }}{% endif %}"
+                           required
+                           {% if is_edit %}readonly{% endif %}>
+                    <div class="help-text">
+                        {% if not is_edit %}
+                            اسم فريد للمستخدم (أحرف، أرقام، @/./+/-/_ فقط)
+                        {% else %}
+                            لا يمكن تغيير اسم المستخدم بعد الإنشاء
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">
+                        <span class="required-mark">*</span>
+                        البريد الإلكتروني
+                    </label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           value="{% if is_edit %}{{ user_obj.email }}{% endif %}"
+                           required>
+                    <div class="help-text">البريد الإلكتروني للمستخدم</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">
+                        الاسم الأول
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="first_name"
+                           name="first_name"
+                           value="{% if is_edit %}{{ user_obj.first_name }}{% endif %}">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="last_name" class="form-label">
+                        اسم العائلة
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="last_name"
+                           name="last_name"
+                           value="{% if is_edit %}{{ user_obj.last_name }}{% endif %}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-lock ms-2"></i>
+                كلمة المرور
+            </h3>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="password" class="form-label">
+                        {% if not is_edit %}<span class="required-mark">*</span>{% endif %}
+                        كلمة المرور
+                    </label>
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           name="password"
+                           {% if not is_edit %}required{% endif %}>
+                    <div class="help-text">
+                        {% if is_edit %}
+                            اترك فارغاً إذا كنت لا تريد تغيير كلمة المرور
+                        {% else %}
+                            يجب أن تكون قوية (حروف، أرقام، رموز)
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if not is_edit %}
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="password_confirm" class="form-label">
+                        <span class="required-mark">*</span>
+                        تأكيد كلمة المرور
+                    </label>
+                    <input type="password"
+                           class="form-control"
+                           id="password_confirm"
+                           name="password_confirm"
+                           required>
+                    <div class="help-text">أعد كتابة كلمة المرور للتأكيد</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Permissions -->
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-shield-alt ms-2"></i>
+                الصلاحيات والحالة
+            </h3>
+
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="is_active"
+                           name="is_active"
+                           {% if not is_edit or user_obj.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        <strong>حساب نشط</strong>
+                        <div class="help-text">قم بإلغاء التحديد بدلاً من حذف الحسابات</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           id="is_staff"
+                           name="is_staff"
+                           {% if is_edit and user_obj.is_staff %}checked{% endif %}>
+                    <label class="form-check-label" for="is_staff">
+                        <strong>مدير/موظف</strong>
+                        <div class="help-text">يمنح الوصول إلى لوحة التحكم</div>
+                    </label>
+                </div>
+            </div>
+
+            {% if is_edit and user_obj.is_superuser %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>تحذير:</strong> هذا المستخدم مدير عام (Superuser). لا يمكن تعديل صلاحيات المدير العام من هنا.
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 justify-content-end">
+            <a href="{% if is_edit %}{% url 'dashboard:user_detail' user_obj.id %}{% else %}{% url 'dashboard:users' %}{% endif %}"
+               class="btn btn-outline">
+                <i class="fas fa-times"></i> إلغاء
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas {% if is_edit %}fa-save{% else %}fa-plus{% endif %}"></i>
+                {% if is_edit %}حفظ التعديلات{% else %}إنشاء المستخدم{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('userForm');
+        const passwordField = document.getElementById('password');
+        const passwordConfirmField = document.getElementById('password_confirm');
+
+        // Password validation for new users
+        if (passwordConfirmField) {
+            form.addEventListener('submit', function(e) {
+                if (passwordField.value !== passwordConfirmField.value) {
+                    e.preventDefault();
+                    alert('كلمات المرور غير متطابقة!');
+                    passwordConfirmField.focus();
+                    return false;
+                }
+
+                if (passwordField.value.length < 8) {
+                    e.preventDefault();
+                    alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل!');
+                    passwordField.focus();
+                    return false;
+                }
+            });
+        }
+
+        // Auto-format username
+        const usernameField = document.getElementById('username');
+        if (usernameField && !usernameField.readOnly) {
+            usernameField.addEventListener('input', function() {
+                // Remove spaces and convert to lowercase
+                this.value = this.value.toLowerCase().replace(/\s/g, '');
+            });
+        }
+    });
+</script>
+{% endblock %}

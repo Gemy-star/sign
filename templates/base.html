@@ -81,7 +81,7 @@
 
                 <div class="nav-section">
                     <h6 class="nav-section-title">النظام</h6>
-                    <a href="/admin/" class="nav-link" target="_blank">
+                    <a href="{% url 'dashboard:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
                         <i class="fas fa-cog"></i>
                         <span>الإعدادات</span>
                     </a>
@@ -97,6 +97,32 @@
         <main class="main-content">
             {% block content %}{% endblock %}
         </main>
+    </div>
+
+    <!-- Toast Container for Messages -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="toast align-items-center text-white border-0 show" role="alert" aria-live="assertive" aria-atomic="true"
+                 style="background-color: {% if message.tags == 'error' %}var(--bs-danger){% elif message.tags == 'success' %}var(--bs-success){% elif message.tags == 'warning' %}var(--bs-warning){% elif message.tags == 'info' %}var(--bs-info){% else %}var(--bs-primary){% endif %};">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% elif message.tags == 'info' %}fa-info-circle{% else %}fa-bell{% endif %} me-2"></i>
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <img src="{% static 'images/logo.png' %}" alt="Loading..." class="loader-logo">
+            <div class="loader-text">جاري التحميل...</div>
+        </div>
     </div>
 
     <!-- Bootstrap Bundle with Popper -->

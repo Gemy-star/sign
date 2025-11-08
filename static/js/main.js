@@ -540,6 +540,140 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================================
+// TOAST NOTIFICATIONS
+// ============================================================================
+
+/**
+ * Initialize Bootstrap toasts and auto-hide them
+ */
+function initializeToasts() {
+    const toastElements = document.querySelectorAll('.toast');
+
+    toastElements.forEach((toastElement, index) => {
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 5000 // 5 seconds
+        });
+
+        // Stagger the display if multiple toasts
+        setTimeout(() => {
+            toast.show();
+        }, index * 200);
+
+        // Auto-hide with animation
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            this.remove();
+        });
+    });
+}
+
+// Initialize toasts when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeToasts);
+} else {
+    initializeToasts();
+}
+
+/**
+ * Programmatically create and show a toast
+ */
+function showToast(message, type = 'info') {
+    const toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) return;
+
+    const typeColors = {
+        success: 'var(--bs-success)',
+        error: 'var(--bs-danger)',
+        danger: 'var(--bs-danger)',
+        warning: 'var(--bs-warning)',
+        info: 'var(--bs-info)',
+        primary: 'var(--bs-primary)'
+    };
+
+    const typeIcons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        danger: 'fa-exclamation-circle',
+        warning: 'fa-exclamation-triangle',
+        info: 'fa-info-circle',
+        primary: 'fa-bell'
+    };
+
+    const toastHtml = `
+        <div class="toast align-items-center text-white border-0 show" role="alert" aria-live="assertive" aria-atomic="true"
+             style="background-color: ${typeColors[type] || typeColors.info};">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas ${typeIcons[type] || typeIcons.info} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+    const newToast = toastContainer.lastElementChild;
+    const toast = new bootstrap.Toast(newToast, {
+        autohide: true,
+        delay: 5000
+    });
+
+    toast.show();
+
+    newToast.addEventListener('hidden.bs.toast', function() {
+        this.remove();
+    });
+}
+
+// ============================================================================
+// PAGE LOADER
+// ============================================================================
+
+/**
+ * Page Loader Controller
+ */
+const PageLoader = {
+    loader: null,
+
+    init() {
+        this.loader = document.getElementById('pageLoader');
+
+        // Hide loader when page is fully loaded
+        window.addEventListener('load', () => {
+            this.hide();
+        });
+
+        // Show loader on page unload (navigation)
+        window.addEventListener('beforeunload', () => {
+            this.show();
+        });
+    },
+
+    show() {
+        if (this.loader) {
+            this.loader.classList.remove('hidden');
+        }
+    },
+
+    hide() {
+        if (this.loader) {
+            setTimeout(() => {
+                this.loader.classList.add('hidden');
+            }, 300); // Small delay for smooth transition
+        }
+    }
+};
+
+// Initialize page loader
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => PageLoader.init());
+} else {
+    PageLoader.init();
+}
+
+// ============================================================================
 // EXPORT FOR GLOBAL USE
 // ============================================================================
 
@@ -548,7 +682,9 @@ window.DashboardUtils = {
     animateCounter,
     debounce,
     showToast,
+    PageLoader,
     LoadingManager,
     getDefaultChartOptions,
     createGradient
 };
+

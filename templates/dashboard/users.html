@@ -85,7 +85,7 @@
         </h3>
         <div class="d-flex gap-2">
             <input type="text" id="searchInput" class="form-control" placeholder="بحث عن مستخدم..." style="max-width: 300px;">
-            <a href="/admin/auth/user/add/" class="btn btn-primary">
+            <a href="{% url 'dashboard:user_create' %}" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> إضافة مستخدم
             </a>
         </div>
@@ -177,12 +177,12 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1">
-                            <a href="/admin/auth/user/{{ user.id }}/change/" class="btn btn-sm btn-primary" title="عرض/تعديل">
+                            <a href="{% url 'dashboard:user_detail' user.id %}" class="btn btn-sm btn-outline" title="التفاصيل">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'dashboard:user_edit' user.id %}" class="btn btn-sm btn-primary" title="تعديل">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button class="btn btn-sm btn-outline" onclick="viewUserDetails({{ user.id }})" title="التفاصيل">
-                                <i class="fas fa-eye"></i>
-                            </button>
                         </div>
                     </td>
                 </tr>
@@ -343,33 +343,8 @@
 
     // View user details in modal
     function viewUserDetails(userId) {
-        const modal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
-        const content = document.getElementById('userDetailsContent');
-
-        // Show loading
-        content.innerHTML = `
-            <div class="text-center py-5">
-                <div class="loading-spinner"></div>
-                <p class="mt-3 text-muted">جاري التحميل...</p>
-            </div>
-        `;
-
-        modal.show();
-
-        // Simulate loading user details
-        setTimeout(() => {
-            content.innerHTML = `
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    لعرض التفاصيل الكاملة، يرجى استخدام صفحة المسؤول.
-                </div>
-                <div class="text-center">
-                    <a href="/admin/auth/user/${userId}/change/" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> فتح في لوحة المسؤول
-                    </a>
-                </div>
-            `;
-        }, 500);
+        // Redirect to user detail page instead of modal
+        window.location.href = `/dashboard/users/${userId}/`;
     }
 </script>
 {% endblock %}

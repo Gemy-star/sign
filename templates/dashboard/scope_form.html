@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}تعديل المجال{% else %}إضافة مجال جديد{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">لوحة التحكم</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:scopes' %}">المجالات</a></li>
+                    <li class="breadcrumb-item active">{% if is_edit %}تعديل{% else %}إضافة{% endif %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tags"></i>
+                        {% if is_edit %}تعديل المجال: {{ scope.name }}{% else %}إضافة مجال جديد{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="scopeForm">
+                        {% csrf_token %}
+
+                        <!-- Basic Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">اسم المجال <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       value="{% if is_edit %}{{ scope.name }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">الفئة <span class="text-danger">*</span></label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">اختر الفئة...</option>
+                                    {% for value, label in categories %}
+                                        <option value="{{ value }}" {% if is_edit and scope.category == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">الوصف <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required>{% if is_edit %}{{ scope.description }}{% endif %}</textarea>
+                            <small class="text-muted">وصف تفصيلي للمجال وفائدته</small>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="icon" class="form-label">الأيقونة</label>
+                                <input type="text" class="form-control" id="icon" name="icon"
+                                       placeholder="fas fa-heart"
+                                       value="{% if is_edit %}{{ scope.icon }}{% endif %}">
+                                <small class="text-muted">كلاس Font Awesome (اختياري)</small>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_active"
+                                           name="is_active"
+                                           {% if is_edit and scope.is_active or not is_edit %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">
+                                        المجال نشط
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Icon Preview -->
+                        <div class="mb-3" id="iconPreview" style="display: none;">
+                            <label class="form-label">معاينة الأيقونة:</label>
+                            <div class="p-3 bg-light rounded">
+                                <i id="iconDisplay" class="fa-3x"></i>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if is_edit %}حفظ التعديلات{% else %}إضافة المجال{% endif %}
+                            </button>
+                            <a href="{% url 'dashboard:scopes' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Icon preview
+const iconInput = document.getElementById('icon');
+const iconPreview = document.getElementById('iconPreview');
+const iconDisplay = document.getElementById('iconDisplay');
+
+function updateIconPreview() {
+    const iconClass = iconInput.value.trim();
+    if (iconClass) {
+        iconDisplay.className = iconClass + ' fa-3x';
+        iconPreview.style.display = 'block';
+    } else {
+        iconPreview.style.display = 'none';
+    }
+}
+
+iconInput.addEventListener('input', updateIconPreview);
+// Initial preview if editing
+if (iconInput.value) {
+    updateIconPreview();
+}
+
+// Form validation
+document.getElementById('scopeForm').addEventListener('submit', function(e) {
+    const name = document.getElementById('name').value.trim();
+    const category = document.getElementById('category').value;
+    const description = document.getElementById('description').value.trim();
+
+    if (!name || name.length < 3) {
+        e.preventDefault();
+        alert('اسم المجال يجب أن يكون 3 أحرف على الأقل');
+        return false;
+    }
+
+    if (!category) {
+        e.preventDefault();
+        alert('يرجى اختيار الفئة');
+        return false;
+    }
+
+    if (!description || description.length < 10) {
+        e.preventDefault();
+        alert('الوصف يجب أن يكون 10 أحرف على الأقل');
+        return false;
+    }
+});
+</script>
+{% endblock %}

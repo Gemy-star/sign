@@ -10,7 +10,7 @@
     </h1>
     <p class="page-subtitle">إدارة مجالات التطوير الشخصي</p>
     <div class="page-actions">
-        <a href="/admin/api/scope/add/" class="btn btn-primary">
+        <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary">
             <i class="fas fa-plus"></i>
             إضافة مجال جديد
         </a>
@@ -139,7 +139,7 @@
 
                     <!-- Actions & Status -->
                     <div class="d-flex gap-2 align-items-center">
-                        <a href="/admin/api/scope/{{ scope.id }}/change/" class="btn btn-outline flex-fill">
+                        <a href="{% url 'dashboard:scope_edit' scope.id %}" class="btn btn-outline flex-fill">
                             <i class="fas fa-edit"></i> تعديل
                         </a>
                         {% if scope.is_active %}
@@ -163,7 +163,7 @@
     <i class="fas fa-inbox fa-3x mb-3"></i>
     <h4>لا توجد مجالات</h4>
     <p class="text-muted">لم يتم إنشاء أي مجالات بعد</p>
-    <a href="/admin/api/scope/add/" class="btn btn-primary mt-3">
+    <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary mt-3">
         <i class="fas fa-plus"></i> إضافة مجال جديد
     </a>
 </div>

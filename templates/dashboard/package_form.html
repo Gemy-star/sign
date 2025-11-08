@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}تعديل الباقة{% else %}إضافة باقة جديدة{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">لوحة التحكم</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:packages' %}">الباقات</a></li>
+                    <li class="breadcrumb-item active">{% if is_edit %}تعديل{% else %}إضافة{% endif %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-box"></i>
+                        {% if is_edit %}تعديل الباقة: {{ package.name }}{% else %}إضافة باقة جديدة{% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="packageForm">
+                        {% csrf_token %}
+
+                        <!-- Basic Information -->
+                        <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-info-circle"></i> المعلومات الأساسية</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">اسم الباقة <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       value="{% if is_edit %}{{ package.name }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="duration" class="form-label">المدة <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="duration" name="duration"
+                                       placeholder="مثال: شهر واحد"
+                                       value="{% if is_edit %}{{ package.duration }}{% endif %}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">الوصف <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required>{% if is_edit %}{{ package.description }}{% endif %}</textarea>
+                        </div>
+
+                        <!-- Pricing -->
+                        <h6 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-money-bill-wave"></i> التسعير والمدة</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">السعر (ريال) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control" id="price" name="price"
+                                       value="{% if is_edit %}{{ package.price }}{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="duration_days" class="form-label">عدد الأيام <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="duration_days" name="duration_days"
+                                       value="{% if is_edit %}{{ package.duration_days }}{% else %}30{% endif %}" required>
+                                <small class="text-muted">المدة بالأيام (30 = شهر، 90 = 3 أشهر، إلخ)</small>
+                            </div>
+                        </div>
+
+                        <!-- Features -->
+                        <h6 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-star"></i> المميزات</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="max_scopes" class="form-label">الحد الأقصى للمجالات <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="max_scopes" name="max_scopes"
+                                       value="{% if is_edit %}{{ package.max_scopes }}{% else %}3{% endif %}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="messages_per_day" class="form-label">الرسائل يوميًا <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="messages_per_day" name="messages_per_day"
+                                       value="{% if is_edit %}{{ package.messages_per_day }}{% else %}3{% endif %}" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="display_order" class="form-label">ترتيب العرض</label>
+                                <input type="number" class="form-control" id="display_order" name="display_order"
+                                       value="{% if is_edit %}{{ package.display_order }}{% else %}0{% endif %}">
+                                <small class="text-muted">الرقم الأصغر يظهر أولاً</small>
+                            </div>
+                        </div>
+
+                        <!-- Options -->
+                        <h6 class="border-bottom pb-2 mb-3 mt-4"><i class="fas fa-toggle-on"></i> الخيارات</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="custom_goals_enabled"
+                                           name="custom_goals_enabled"
+                                           {% if is_edit and package.custom_goals_enabled %}checked{% endif %}>
+                                    <label class="form-check-label" for="custom_goals_enabled">
+                                        أهداف مخصصة
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="priority_support"
+                                           name="priority_support"
+                                           {% if is_edit and package.priority_support %}checked{% endif %}>
+                                    <label class="form-check-label" for="priority_support">
+                                        دعم مميز
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_active"
+                                           name="is_active"
+                                           {% if is_edit and package.is_active or not is_edit %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active">
+                                        نشط
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_featured"
+                                           name="is_featured"
+                                           {% if is_edit and package.is_featured %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_featured">
+                                        مميزة
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if is_edit %}حفظ التعديلات{% else %}إضافة الباقة{% endif %}
+                            </button>
+                            <a href="{% url 'dashboard:packages' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('packageForm').addEventListener('submit', function(e) {
+    const price = parseFloat(document.getElementById('price').value);
+    const durationDays = parseInt(document.getElementById('duration_days').value);
+    const maxScopes = parseInt(document.getElementById('max_scopes').value);
+    const messagesPerDay = parseInt(document.getElementById('messages_per_day').value);
+
+    if (price < 0) {
+        e.preventDefault();
+        alert('السعر يجب أن يكون رقم موجب');
+        return false;
+    }
+
+    if (durationDays < 1) {
+        e.preventDefault();
+        alert('عدد الأيام يجب أن يكون على الأقل 1');
+        return false;
+    }
+
+    if (maxScopes < 1) {
+        e.preventDefault();
+        alert('الحد الأقصى للمجالات يجب أن يكون على الأقل 1');
+        return false;
+    }
+
+    if (messagesPerDay < 1) {
+        e.preventDefault();
+        alert('الرسائل يوميًا يجب أن تكون على الأقل 1');
+        return false;
+    }
+});
+</script>
+{% endblock %}

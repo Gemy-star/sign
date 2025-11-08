@@ -161,7 +161,7 @@
                             <a href="{% url 'dashboard:subscription_detail' subscription.id %}" class="btn btn-sm btn-primary" title="عرض التفاصيل">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="/admin/api/subscription/{{ subscription.id }}/change/" class="btn btn-sm btn-outline" title="تعديل">
+                            <a href="{% url 'dashboard:subscription_edit' subscription.id %}" class="btn btn-sm btn-outline" title="تعديل">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </div>

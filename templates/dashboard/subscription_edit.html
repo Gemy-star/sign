@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}تعديل الاشتراك{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:home' %}">لوحة التحكم</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:subscriptions' %}">الاشتراكات</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:subscription_detail' subscription.id %}">{{ subscription.id }}</a></li>
+                    <li class="breadcrumb-item active">تعديل</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit"></i>
+                        تعديل الاشتراك #{{ subscription.id }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Subscription Info -->
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>المستخدم:</strong> {{ subscription.user.get_full_name|default:subscription.user.username }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>الباقة:</strong> {{ subscription.package.name }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>تاريخ البدء:</strong> {{ subscription.start_date|date:"Y-m-d" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" id="subscriptionForm">
+                        {% csrf_token %}
+
+                        <!-- Status -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">حالة الاشتراك <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    {% for value, label in status_choices %}
+                                        <option value="{{ value }}" {% if subscription.status == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="auto_renew"
+                                           name="auto_renew" {% if subscription.auto_renew %}checked{% endif %}>
+                                    <label class="form-check-label" for="auto_renew">
+                                        التجديد التلقائي
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Scopes -->
+                        <div class="mb-4">
+                            <label class="form-label">المجالات المختارة <span class="text-danger">*</span></label>
+                            <small class="text-muted d-block mb-2">
+                                الحد الأقصى: {{ subscription.package.max_scopes }} مجالات
+                            </small>
+
+                            <div class="row g-3">
+                                {% for scope in all_scopes %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input scope-checkbox" type="checkbox"
+                                               name="scopes" value="{{ scope.id }}"
+                                               id="scope{{ scope.id }}"
+                                               {% if scope in subscription.selected_scopes.all %}checked{% endif %}>
+                                        <label class="form-check-label" for="scope{{ scope.id }}">
+                                            {% if scope.icon %}<i class="{{ scope.icon }}"></i>{% endif %}
+                                            {{ scope.name }}
+                                            <small class="text-muted d-block">{{ scope.get_category_display }}</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <div id="scopeCountWarning" class="alert alert-warning mt-3" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                لقد اخترت <strong id="selectedCount">0</strong> مجال من أصل <strong>{{ subscription.package.max_scopes }}</strong> مسموح
+                            </div>
+                        </div>
+
+                        <!-- Current Subscription Info -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title">معلومات إضافية</h6>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <small class="text-muted">تاريخ الانتهاء:</small><br>
+                                        <strong>{{ subscription.end_date|date:"Y-m-d" }}</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">السعر المدفوع:</small><br>
+                                        <strong>{{ subscription.price }} ريال</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">طريقة الدفع:</small><br>
+                                        <strong>{{ subscription.payment_method|default:"غير محدد" }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save"></i> حفظ التعديلات
+                            </button>
+                            <a href="{% url 'dashboard:subscription_detail' subscription.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const maxScopes = {{ subscription.package.max_scopes }};
+const checkboxes = document.querySelectorAll('.scope-checkbox');
+const warningDiv = document.getElementById('scopeCountWarning');
+const selectedCountSpan = document.getElementById('selectedCount');
+const submitBtn = document.getElementById('submitBtn');
+
+function updateScopeCount() {
+    const checkedCount = document.querySelectorAll('.scope-checkbox:checked').length;
+    selectedCountSpan.textContent = checkedCount;
+
+    if (checkedCount > maxScopes) {
+        warningDiv.style.display = 'block';
+        warningDiv.className = 'alert alert-danger mt-3';
+        submitBtn.disabled = true;
+    } else if (checkedCount === 0) {
+        warningDiv.style.display = 'block';
+        warningDiv.className = 'alert alert-warning mt-3';
+        warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> يرجى اختيار مجال واحد على الأقل';
+        submitBtn.disabled = true;
+    } else {
+        warningDiv.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateScopeCount);
+});
+
+// Initial check
+updateScopeCount();
+
+// Form validation
+document.getElementById('subscriptionForm').addEventListener('submit', function(e) {
+    const checkedCount = document.querySelectorAll('.scope-checkbox:checked').length;
+
+    if (checkedCount === 0) {
+        e.preventDefault();
+        alert('يرجى اختيار مجال واحد على الأقل');
+        return false;
+    }
+
+    if (checkedCount > maxScopes) {
+        e.preventDefault();
+        alert(`يمكنك اختيار ${maxScopes} مجالات كحد أقصى`);
+        return false;
+    }
+});
+</script>
+{% endblock %}
