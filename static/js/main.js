@@ -107,6 +107,7 @@ class Sidebar {
     constructor() {
         this.sidebar = document.getElementById('sidebar');
         this.toggleBtn = document.getElementById('sidebarToggle');
+        this.overlay = document.getElementById('sidebarOverlay');
         this.init();
     }
 
@@ -115,10 +116,17 @@ class Sidebar {
             this.toggleBtn.addEventListener('click', () => this.toggle());
         }
 
+        // Close sidebar when clicking overlay
+        if (this.overlay) {
+            this.overlay.addEventListener('click', () => this.close());
+        }
+
         // Close sidebar on mobile when clicking outside
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
-                if (!this.sidebar.contains(e.target) && !this.toggleBtn?.contains(e.target)) {
+                if (!this.sidebar.contains(e.target) &&
+                    !this.toggleBtn?.contains(e.target) &&
+                    this.sidebar.classList.contains('active')) {
                     this.close();
                 }
             }
@@ -127,21 +135,27 @@ class Sidebar {
         // Handle window resize
         window.addEventListener('resize', debounce(() => {
             if (window.innerWidth > 768) {
-                this.open();
+                this.close();
             }
         }, 250));
     }
 
     toggle() {
         this.sidebar.classList.toggle('active');
+        this.toggleBtn?.classList.toggle('active');
+        this.overlay?.classList.toggle('active');
     }
 
     open() {
         this.sidebar.classList.add('active');
+        this.toggleBtn?.classList.add('active');
+        this.overlay?.classList.add('active');
     }
 
     close() {
         this.sidebar.classList.remove('active');
+        this.toggleBtn?.classList.remove('active');
+        this.overlay?.classList.remove('active');
     }
 }
 
@@ -640,8 +654,13 @@ const PageLoader = {
     init() {
         this.loader = document.getElementById('pageLoader');
 
-        // Don't auto-show on every page
-        // Loader is now only shown when explicitly called via show() method
+        // Show loader immediately on page load
+        this.show();
+
+        // Hide loader when page is fully loaded
+        window.addEventListener('load', () => {
+            this.hide();
+        });
     },
 
     show() {
@@ -653,18 +672,17 @@ const PageLoader = {
 
     hide() {
         if (this.loader) {
-            this.loader.classList.remove('show');
-            this.loader.classList.add('hidden');
+            // Add a small delay for smooth transition
+            setTimeout(() => {
+                this.loader.classList.remove('show');
+                this.loader.classList.add('hidden');
+            }, 300);
         }
     }
 };
 
-// Initialize page loader
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => PageLoader.init());
-} else {
-    PageLoader.init();
-}
+// Initialize page loader immediately
+PageLoader.init();
 
 // ============================================================================
 // EXPORT FOR GLOBAL USE
