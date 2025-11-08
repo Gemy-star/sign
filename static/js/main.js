@@ -640,28 +640,21 @@ const PageLoader = {
     init() {
         this.loader = document.getElementById('pageLoader');
 
-        // Hide loader when page is fully loaded
-        window.addEventListener('load', () => {
-            this.hide();
-        });
-
-        // Show loader on page unload (navigation)
-        window.addEventListener('beforeunload', () => {
-            this.show();
-        });
+        // Don't auto-show on every page
+        // Loader is now only shown when explicitly called via show() method
     },
 
     show() {
         if (this.loader) {
             this.loader.classList.remove('hidden');
+            this.loader.classList.add('show');
         }
     },
 
     hide() {
         if (this.loader) {
-            setTimeout(() => {
-                this.loader.classList.add('hidden');
-            }, 300); // Small delay for smooth transition
+            this.loader.classList.remove('show');
+            this.loader.classList.add('hidden');
         }
     }
 };
