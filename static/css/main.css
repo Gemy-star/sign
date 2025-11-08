@@ -688,10 +688,10 @@ body {
 
 .table-responsive {
     overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
-    border-radius: var(--border-radius-md);
-    margin: 0;
-    position: relative;
+    width: 100%;
+    display: block;
 }
 
 /* Responsive table wrapper styles */
@@ -705,7 +705,8 @@ body {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px; /* Ensure table doesn't squish too much */
+    min-width: 900px; /* Force horizontal scroll on mobile */
+    table-layout: auto;
 }
 
 .data-table thead {
@@ -984,17 +985,26 @@ html {
         box-shadow: none;
         border-top: 1px solid var(--color-bg-light);
         border-bottom: 1px solid var(--color-bg-light);
+        overflow: visible !important;
     }
 
     .table-responsive {
-        margin-left: 0;
-        margin-right: 0;
+        margin: 0;
+        padding: 0;
         border-radius: 0;
         -webkit-overflow-scrolling: touch;
+        overflow-x: scroll !important;
+        overflow-y: visible;
+        width: 100%;
+        display: block;
+        position: relative;
     }
 
     .data-table {
         font-size: 0.813rem;
+        min-width: 1000px !important;
+        display: table;
+        width: max-content;
     }
 
     .data-table th,
