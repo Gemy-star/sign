@@ -26,6 +26,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://localhost",
+    "http://127.0.0.1",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Set to True only for development if needed
@@ -95,6 +97,14 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
     'rest_framework.renderers.JSONRenderer',
     'rest_framework.renderers.BrowsableAPIRenderer',  # Keep browsable API in dev
 ]
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'OPTIONS': {'MAX_ENTRIES': 1000}
+    }
+}
 
 # Print settings on startup (helpful for debugging)
 print(f"Running in LOCAL DEVELOPMENT mode")

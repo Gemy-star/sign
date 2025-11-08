@@ -12,20 +12,21 @@ from .base import *
 DEBUG = False
 
 # Must be set in environment variables
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'sign-sa.net,72.61.90.66').split(',')
 
-# Database - PostgreSQL for production
+# Database - MySQL for production
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'motivational_db'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'signdb'),
+        'USER': os.environ.get('DB_USER', 'sign'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'gemy2803150'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
         'CONN_MAX_AGE': 600,
         'OPTIONS': {
             'connect_timeout': 10,
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
@@ -36,7 +37,7 @@ DATABASES = {
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # CORS Settings - Strict in production
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'https://sign-sa.net,http://72.61.90.66').split(',')
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
@@ -55,15 +56,19 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Email Backend - SMTP for production
+# Email Backend - SendGrid for production
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@motivationalapp.com')
-SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'admin@motivationalapp.com')
+EMAIL_HOST_USER = 'apikey'  # This is literally the string 'apikey' for SendGrid
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_FROM_ADDRESS', 'noreply@sign-sa.net')
+SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'admin@sign-sa.net')
+
+# Optional: Set friendly from name
+# from constance import config
+# DEFAULT_FROM_EMAIL = f'{config.EMAIL_FROM_NAME} <{config.EMAIL_FROM_ADDRESS}>'
 
 # Cache - Redis for production
 CACHES = {
@@ -72,18 +77,7 @@ CACHES = {
         'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PARSER_CLASS': 'redis.connection.HiredisParser',
-            'CONNECTION_POOL_CLASS_KWARGS': {
-                'max_connections': 50,
-                'retry_on_timeout': True,
-            },
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            'IGNORE_EXCEPTIONS': True,  # Don't crash if Redis is down
-        },
-        'KEY_PREFIX': 'motivational_app',
-        'TIMEOUT': 300,
+        }
     }
 }
 
@@ -225,7 +219,7 @@ if not SITE_URL or not SITE_URL.startswith('https://'):
 # Print production mode indicator
 print("Running in PRODUCTION mode")
 print(f"Allowed Hosts: {ALLOWED_HOSTS}")
-print(f"Database: PostgreSQL at {DATABASES['default']['HOST']}")
+print(f"Database: MySQL at {DATABASES['default']['HOST']}")
 print(f"Cache: Redis at {CACHES['default']['LOCATION']}")
 
 # Redis health check (optional)

@@ -190,6 +190,23 @@ CONSTANCE_CONFIG = {
         str
     ),
 
+    # SendGrid Email Configuration
+    'SENDGRID_API_KEY': (
+        os.environ.get('SENDGRID_API_KEY', ''),
+        'SendGrid API Key for sending emails',
+        str
+    ),
+    'EMAIL_FROM_ADDRESS': (
+        'noreply@sign-sa.net',
+        'Default From email address',
+        str
+    ),
+    'EMAIL_FROM_NAME': (
+        'Sign SA',
+        'Default From name for emails',
+        str
+    ),
+
     # Site Configuration
     'SITE_URL': (
         os.environ.get('SITE_URL', 'http://localhost:8000'),
@@ -265,6 +282,11 @@ CONSTANCE_CONFIG_FIELDSETS = {
         'TAP_API_KEY',
         'TAP_SECRET_KEY',
         'TAP_BASE_URL',
+    ),
+    'Email Configuration': (
+        'SENDGRID_API_KEY',
+        'EMAIL_FROM_ADDRESS',
+        'EMAIL_FROM_NAME',
     ),
     'Site Configuration': (
         'SITE_URL',
