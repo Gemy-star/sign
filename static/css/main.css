@@ -448,17 +448,11 @@ body {
 /* ============================================================================
    CARDS
    ============================================================================ */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
 
-@media (max-width: 576px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
+/* Bootstrap Grid Integration for Stats */
+.row.g-3 {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
 }
 
 .stat-card {
@@ -469,6 +463,7 @@ body {
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
+    height: 100%;
 }
 
 .stat-card::before {
@@ -893,9 +888,17 @@ html {
         padding-top: 5rem; /* Account for mobile menu button */
     }
 
-    .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+    /* Bootstrap Grid Adjustments */
+    .row {
+        --bs-gutter-x: 0.75rem;
+        --bs-gutter-y: 0.75rem;
+        margin-left: calc(var(--bs-gutter-x) * -0.5);
+        margin-right: calc(var(--bs-gutter-x) * -0.5);
+    }
+
+    .row > * {
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+        padding-right: calc(var(--bs-gutter-x) * 0.5);
     }
 
     .page-header {
@@ -1065,17 +1068,6 @@ html {
     .breadcrumb {
         font-size: 0.813rem;
         margin-bottom: 1rem;
-    }
-
-    /* Grid Layouts */
-    .row {
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
-    }
-
-    .row > * {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
     }
 
     /* Package Cards Grid */
@@ -1352,4 +1344,118 @@ html {
         margin-top: 1.5rem;
     }
 }
+
+/* ============================================================================
+   BOOTSTRAP SELECT & SWIPER CUSTOMIZATION
+   ============================================================================ */
+
+/* Bootstrap Select RTL Support */
+.bootstrap-select {
+    direction: rtl;
+}
+
+.bootstrap-select .dropdown-toggle {
+    border-radius: var(--border-radius-md);
+    border: 2px solid #e2e8f0;
+    transition: all var(--transition-fast);
+}
+
+.bootstrap-select .dropdown-toggle:hover,
+.bootstrap-select .dropdown-toggle:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(235, 103, 42, 0.1);
+}
+
+.bootstrap-select .dropdown-menu {
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bootstrap-select .dropdown-item.active,
+.bootstrap-select .dropdown-item:active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+}
+
+.bootstrap-select .dropdown-item:hover {
+    background: rgba(235, 103, 42, 0.1);
+}
+
+/* Swiper Customization */
+.swiper {
+    width: 100%;
+    height: auto;
+}
+
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.swiper-pagination-bullet {
+    background: var(--color-primary);
+    opacity: 0.5;
+    width: 10px;
+    height: 10px;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.9);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-full);
+    box-shadow: var(--shadow-md);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 1.25rem;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* RTL Support for Swiper */
+.swiper-rtl .swiper-button-next {
+    left: 10px;
+    right: auto;
+}
+
+.swiper-rtl .swiper-button-prev {
+    right: 10px;
+    left: auto;
+}
+
+/* Swiper in Packages Page */
+.packagesSwiper {
+    padding: 0 3rem 2rem;
+}
+
+.packagesSwiper .swiper-slide {
+    transition: all var(--transition-base);
+}
+
+.packagesSwiper .swiper-slide:not(.swiper-slide-active) {
+    opacity: 0.5;
+    transform: scale(0.9);
+}
+
+.packagesSwiper .swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
 

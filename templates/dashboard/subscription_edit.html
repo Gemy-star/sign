@@ -50,9 +50,13 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="status" class="form-label">حالة الاشتراك <span class="text-danger">*</span></label>
-                                <select class="form-select" id="status" name="status" required>
+                                <select class="form-select selectpicker" id="status" name="status"
+                                        data-style="btn-outline-primary"
+                                        data-width="100%" required>
                                     {% for value, label in status_choices %}
-                                        <option value="{{ value }}" {% if subscription.status == value %}selected{% endif %}>
+                                        <option value="{{ value }}"
+                                                data-icon="fas fa-{% if value == 'active' %}check-circle{% elif value == 'expired' %}clock{% elif value == 'cancelled' %}times-circle{% else %}hourglass-half{% endif %}"
+                                                {% if subscription.status == value %}selected{% endif %}>
                                             {{ label }}
                                         </option>
                                     {% endfor %}
@@ -185,6 +189,13 @@ document.getElementById('subscriptionForm').addEventListener('submit', function(
         alert(`يمكنك اختيار ${maxScopes} مجالات كحد أقصى`);
         return false;
     }
+});
+
+// Initialize Bootstrap Select
+$(document).ready(function() {
+    $('.selectpicker').selectpicker({
+        noneSelectedText: 'لم يتم الاختيار'
+    });
 });
 </script>
 {% endblock %}

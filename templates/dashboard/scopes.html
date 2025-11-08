@@ -18,8 +18,9 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="stats-grid mb-4">
-    <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="stat-card fade-in" style="animation-delay: 0.1s;">
         <div class="stat-header">
             <div class="stat-icon primary">
                 <i class="fas fa-layer-group"></i>
@@ -29,7 +30,8 @@
         <div class="stat-label">إجمالي المجالات</div>
     </div>
 
-    <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="stat-card fade-in" style="animation-delay: 0.2s;">
         <div class="stat-header">
             <div class="stat-icon success">
                 <i class="fas fa-check-circle"></i>
@@ -41,7 +43,8 @@
         <div class="stat-label">مجالات نشطة</div>
     </div>
 
-    <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="stat-card fade-in" style="animation-delay: 0.3s;">
         <div class="stat-header">
             <div class="stat-icon secondary">
                 <i class="fas fa-users"></i>
@@ -82,9 +85,9 @@
         </span>
     </div>
 
-    <div class="row">
+    <div class="row g-3">
         {% for scope in category.list %}
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-12 col-sm-6 col-lg-4 mb-4">
             <div class="card h-100 scale-in" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); transition: all var(--transition-base); animation-delay: {{ forloop.counter0|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s;">
                 <div class="card-body p-4">
                     <!-- Icon & Title -->
@@ -171,8 +174,8 @@
 
 <!-- Category Distribution Chart -->
 {% if scopes %}
-<div class="row mt-5">
-    <div class="col-lg-8">
+<div class="row g-3 mt-5">
+    <div class="col-12 col-lg-8">
         <div class="chart-card fade-in">
             <div class="chart-header">
                 <h3 class="chart-title">
@@ -186,7 +189,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="chart-card fade-in" style="animation-delay: 0.2s;">
             <div class="chart-header">
                 <h3 class="chart-title">

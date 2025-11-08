@@ -18,9 +18,10 @@
 </div>
 
 <!-- Packages Grid -->
-<div class="row">
+<!-- Desktop Grid View -->
+<div class="row g-3 d-none d-md-flex">
     {% for package in packages %}
-    <div class="col-lg-4 col-md-6 mb-4">
+    <div class="col-12 col-sm-6 col-lg-4 mb-4">
         <div class="card h-100 scale-in" style="animation-delay: {{ forloop.counter0|add:1|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s; border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); overflow: hidden; transition: all var(--transition-base);">
             {% if package.is_featured %}
             <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; text-align: center; padding: 0.5rem; font-weight: 600;">
@@ -120,6 +121,72 @@
     {% endfor %}
 </div>
 
+<!-- Mobile Swiper Carousel -->
+<div class="d-md-none mb-4">
+    {% if packages %}
+    <div class="swiper packagesSwiper" style="padding: 1rem 0;">
+        <div class="swiper-wrapper">
+            {% for package in packages %}
+            <div class="swiper-slide">
+                <div class="card h-100" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); overflow: hidden;">
+                    {% if package.is_featured %}
+                    <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; text-align: center; padding: 0.5rem; font-weight: 600;">
+                        <i class="fas fa-star"></i> باقة مميزة
+                    </div>
+                    {% endif %}
+
+                    <div class="card-body p-3">
+                        <div class="text-center mb-3">
+                            <h3 class="h5 fw-bold mb-2" style="color: var(--color-secondary);">{{ package.name }}</h3>
+                            <div class="mb-2">
+                                <span style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">
+                                    ${{ package.price }}
+                                </span>
+                                <span style="color: var(--color-text-light); font-size: 0.875rem;">/{{ package.get_duration_display }}</span>
+                            </div>
+                            <p style="color: var(--color-text-light); font-size: 0.875rem;">{{ package.description|truncatewords:15 }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <ul style="list-style: none; padding: 0; font-size: 0.875rem;">
+                                <li class="mb-1">
+                                    <i class="fas fa-bullseye" style="color: var(--color-primary); margin-left: 0.5rem;"></i>
+                                    {{ package.max_scopes }} مجالات
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-comment-dots" style="color: var(--color-secondary); margin-left: 0.5rem;"></i>
+                                    {{ package.messages_per_day }} رسالة/يوم
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'dashboard:package_edit' package.id %}" class="btn btn-sm btn-outline flex-fill">
+                                <i class="fas fa-edit"></i> تعديل
+                            </a>
+                            {% if package.is_active %}
+                            <span class="badge badge-success d-flex align-items-center">نشط</span>
+                            {% else %}
+                            <span class="badge badge-danger d-flex align-items-center">غير نشط</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="swiper-pagination mt-3"></div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle fa-2x mb-3"></i>
+        <h4>لا توجد باقات</h4>
+        <p>لم يتم إنشاء أي باقات بعد</p>
+    </div>
+    {% endif %}
+</div>
+
 <!-- Statistics Card -->
 {% if packages %}
 <div class="chart-card mt-4 fade-in">
@@ -183,6 +250,25 @@
                 this.style.transform = 'translateY(0)';
                 this.style.boxShadow = 'var(--shadow-md)';
             });
+        });
+
+        // Initialize Swiper for mobile packages carousel
+        var packagesSwiper = new Swiper('.packagesSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            centeredSlides: true,
+            loop: {{ packages|length }} > 1 ? true : false,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            effect: 'slide',
+            speed: 600,
         });
     });
 </script>
