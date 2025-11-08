@@ -455,6 +455,12 @@ body {
     margin-bottom: 2rem;
 }
 
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .stat-card {
     background: var(--color-white);
     padding: 1.5rem;
@@ -574,22 +580,27 @@ body {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--color-bg-light);
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .chart-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--color-text-dark);
+    flex-shrink: 0;
 }
 
 .chart-filters {
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .chart-container {
     position: relative;
     height: 300px;
+    width: 100%;
 }
 
 /* ============================================================================
@@ -677,11 +688,24 @@ body {
 
 .table-responsive {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--border-radius-md);
+    margin: 0;
+    position: relative;
+}
+
+/* Responsive table wrapper styles */
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 800px; /* Ensure table doesn't squish too much */
 }
 
 .data-table thead {
@@ -783,6 +807,34 @@ body {
 /* ============================================================================
    UTILITIES
    ============================================================================ */
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-light);
+    border-radius: var(--border-radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    border-radius: var(--border-radius-sm);
+    transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--color-accent-dark), var(--color-primary));
+}
+
+/* Firefox Scrollbar */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-bg-light);
+}
+
 .loading-spinner {
     display: inline-block;
     width: 40px;
@@ -831,16 +883,240 @@ body {
 
     .main-content {
         margin-right: 0;
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         padding-top: 5rem; /* Account for mobile menu button */
     }
 
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .page-header {
         margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.875rem;
+    }
+
+    .page-actions {
+        margin-top: 1rem;
+    }
+
+    .page-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .chart-filters {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    /* Card Responsive */
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    /* Stats Card */
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.25rem;
+    }
+
+    /* Table Responsive Fixes */
+    .table-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding: 1rem;
+    }
+
+    .table-header .d-flex {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .table-header .form-control {
+        max-width: 100% !important;
+        width: 100%;
+    }
+
+    .table-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table-card {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+        box-shadow: none;
+        border-top: 1px solid var(--color-bg-light);
+        border-bottom: 1px solid var(--color-bg-light);
+    }
+
+    .table-responsive {
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        font-size: 0.813rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
+
+    .data-table th {
+        font-size: 0.75rem;
+        background: var(--color-bg-light);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* User Avatar in Tables */
+    .user-avatar {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 0.875rem;
+    }
+
+    /* Buttons */
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.625rem 1rem;
+    }
+
+    .btn-sm {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    .btn i {
+        font-size: 0.875rem;
+    }
+
+    /* Badges */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    /* Form Controls */
+    .form-control,
+    .form-select {
+        font-size: 0.875rem;
+        padding: 0.625rem 0.875rem;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumb {
+        font-size: 0.813rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Grid Layouts */
+    .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+
+    .row > * {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    /* Package Cards Grid */
+    .col-lg-4,
+    .col-md-6 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    /* Chart Cards */
+    .chart-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+    }
+
+    /* Detail Pages */
+    .detail-card {
+        margin-bottom: 1rem;
+    }
+
+    .detail-label {
+        font-size: 0.813rem;
+    }
+
+    .detail-value {
+        font-size: 0.938rem;
+    }
+
+    /* Action Buttons Group */
+    .d-flex.gap-1,
+    .d-flex.gap-2 {
+        gap: 0.5rem !important;
+    }
+
+    /* Prevent horizontal overflow */
+    body {
+        overflow-x: hidden;
+    }
+
+    .dashboard-container {
+        overflow-x: hidden;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+        left: 1rem;
+        right: 1rem;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: 100%;
     }
 
     /* Overlay for sidebar on mobile */
