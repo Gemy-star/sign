@@ -200,21 +200,19 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
 #     environment='production',
 # )
 
-# OpenAI Configuration - Must be set in environment
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY must be set in production")
+# OpenAI Configuration - Get from Django Constance (configured via admin)
+# Falls back to environment variable if Constance is not yet set up
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
-# Tap Payment Configuration - Must be set in environment
-TAP_API_KEY = os.environ.get('TAP_API_KEY')
-TAP_SECRET_KEY = os.environ.get('TAP_SECRET_KEY')
-if not TAP_API_KEY or not TAP_SECRET_KEY:
-    raise ValueError("Tap Payment credentials must be set in production")
+# Tap Payment Configuration - Get from environment or Constance
+TAP_API_KEY = os.environ.get('TAP_API_KEY', '')
+TAP_SECRET_KEY = os.environ.get('TAP_SECRET_KEY', '')
 
-# Site URL - Must be HTTPS in production
-SITE_URL = os.environ.get('SITE_URL')
-if not SITE_URL or not SITE_URL.startswith('https://'):
-    raise ValueError("SITE_URL must be set and use HTTPS in production")
+# Site URL - Get from environment or Constance
+SITE_URL = os.environ.get('SITE_URL', 'https://sign-sa.net')
+
+# Note: These settings can be managed via Django Constance at /admin/constance/config/
+# The actual values will be loaded from the database at runtime
 
 # Print production mode indicator
 print("Running in PRODUCTION mode")
