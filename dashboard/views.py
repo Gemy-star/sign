@@ -297,7 +297,7 @@ def users_list(request):
     """List all users"""
     users = User.objects.annotate(
         active_subs=Count('subscriptions', filter=Q(subscriptions__status='active')),
-        total_messages=Count('aimessage')
+        total_messages=Count('ai_messages')
     ).order_by('-date_joined')[:50]
 
     context = {
