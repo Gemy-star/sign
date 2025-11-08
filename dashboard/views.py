@@ -293,11 +293,10 @@ def messages_list(request):
 
 
 @staff_member_required
-@staff_member_required
 def users_list(request):
     """List all users"""
     users = User.objects.annotate(
-        active_subs=Count('subscription', filter=Q(subscription__status='active')),
+        active_subs=Count('subscriptions', filter=Q(subscriptions__status='active')),
         total_messages=Count('aimessage')
     ).order_by('-date_joined')[:50]
 

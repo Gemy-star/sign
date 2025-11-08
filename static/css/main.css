@@ -449,7 +449,7 @@ body {
     justify-content: center;
     font-size: 1.5rem;
     color: var(--color-white);
-    background-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-warning), #fbd38d);
 }
 
 .stat-icon.primary {
