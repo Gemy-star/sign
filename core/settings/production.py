@@ -43,7 +43,10 @@ CORS_ALLOW_CREDENTIALS = True
 
 # CSRF Settings
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://sign-sa.net,http://72.61.90.66'
+).split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else ['https://sign-sa.net', 'http://72.61.90.66']
 
 # Security Settings
 SECURE_SSL_REDIRECT = True
