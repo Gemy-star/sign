@@ -690,8 +690,13 @@ body {
     overflow-x: auto;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: auto; /* show scrollbar for IE/Edge */
+    touch-action: pan-x; /* allow horizontal panning on touch devices */
     width: 100%;
     display: block;
+    border-radius: var(--border-radius-md);
+    margin: 0;
+    position: relative;
 }
 
 /* Responsive table wrapper styles */
@@ -1109,14 +1114,16 @@ html {
         gap: 0.5rem !important;
     }
 
-    /* Prevent horizontal overflow */
+    /* Allow inner containers to scroll horizontally while preventing page-level overflow issues */
     body {
-        overflow-x: hidden;
+        overflow-x: visible;
     }
 
     .dashboard-container {
-        overflow-x: hidden;
+        overflow-x: visible;
     }
+
+    /* removed duplicate rule to allow inner scrolling */
 
     /* Toast Notifications */
     .toast-container {
