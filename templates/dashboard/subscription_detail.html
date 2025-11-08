@@ -4,22 +4,27 @@
 {% block title %}تفاصيل الاشتراك #{{ subscription.id }}{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h1 class="page-title fade-in">
-                <i class="fas fa-file-invoice"></i> تفاصيل الاشتراك #{{ subscription.id }}
-            </h1>
-            <p class="page-subtitle">معلومات تفصيلية عن الاشتراك</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="page-title fade-in">
+                            <i class="fas fa-file-invoice"></i> تفاصيل الاشتراك #{{ subscription.id }}
+                        </h1>
+                        <p class="page-subtitle">معلومات تفصيلية عن الاشتراك</p>
+                    </div>
+                    <a href="{% url 'dashboard:subscriptions' %}" class="btn btn-outline">
+                        <i class="fas fa-arrow-right"></i> العودة
+                    </a>
+                </div>
+            </div>
         </div>
-        <a href="{% url 'dashboard:subscriptions' %}" class="btn btn-outline">
-            <i class="fas fa-arrow-right"></i> العودة
-        </a>
     </div>
-</div>
 
-<!-- Subscription Info Cards -->
-<div class="row mb-4">
+    <!-- Subscription Info Cards -->
+    <div class="row mb-4">
     <div class="col-lg-8">
         <div class="card scale-in" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg);">
             <div class="card-body p-4">
@@ -197,12 +202,14 @@
                 {% endif %}
             </div>
         </div>
+        </div>
     </div>
-</div>
 
-<!-- User Goals -->
-{% if goals %}
-<div class="card mb-4 fade-in">
+    <!-- User Goals -->
+    {% if goals %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card fade-in">
     <div class="card-body p-4" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg);">
         <h3 class="h5 fw-bold mb-4" style="color: var(--color-secondary);">
             <i class="fas fa-bullseye"></i> أهداف المستخدم ({{ goals.count }})
@@ -247,14 +254,18 @@
                 </div>
             </div>
             {% endfor %}
+            </div>
+        </div>
+            </div>
         </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
-<!-- Recent Messages -->
-{% if messages %}
-<div class="card mb-4 fade-in">
+    <!-- Recent Messages -->
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card fade-in">
     <div class="card-body p-0" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg);">
         <div class="p-4 border-bottom">
             <h3 class="h5 fw-bold mb-0" style="color: var(--color-secondary);">
@@ -306,14 +317,18 @@
                 </div>
             </div>
             {% endfor %}
+            </div>
+        </div>
+            </div>
         </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
-<!-- Payment Transactions -->
-{% if transactions %}
-<div class="card fade-in">
+    <!-- Payment Transactions -->
+    {% if transactions %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card fade-in">
     <div class="card-body p-0" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg);">
         <div class="p-4 border-bottom">
             <h3 class="h5 fw-bold mb-0" style="color: var(--color-secondary);">
@@ -361,9 +376,11 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+                </table>
+            </div>
+            </div>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

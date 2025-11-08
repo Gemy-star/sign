@@ -4,15 +4,21 @@
 {% block title %}الاشتراكات{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-crown"></i> الاشتراكات
-    </h1>
-    <p class="page-subtitle">إدارة اشتراكات المستخدمين</p>
-</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-crown"></i> الاشتراكات
+                </h1>
+                <p class="page-subtitle">إدارة اشتراكات المستخدمين</p>
+            </div>
+        </div>
+    </div>
 
-<!-- Filter Buttons -->
-<div class="mb-4">
+    <!-- Filter Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
     <div class="btn-group" role="group">
         <a href="{% url 'dashboard:subscriptions' %}" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">
             <i class="fas fa-list"></i> الكل
@@ -43,12 +49,15 @@
             <span class="badge" style="background: white; color: var(--color-danger); margin-right: 0.5rem;">
                 {{ status_counts.cancelled|default:0 }}
             </span>
-        </a>
+            </a>
+        </div>
+        </div>
     </div>
-</div>
 
-<!-- Subscriptions Table -->
-<div class="table-card fade-in">
+    <!-- Subscriptions Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card fade-in">
     <div class="table-header">
         <h3 class="table-title">
             <i class="fas fa-table"></i>
@@ -177,12 +186,14 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+            </table>
+        </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- Statistics Cards -->
-<div class="row mt-4">
+    <!-- Statistics Cards -->
+    <div class="row mt-4">
     <div class="col-md-3 mb-3">
         <div class="stat-card scale-in" style="animation-delay: 0.1s;">
             <div class="stat-header">
@@ -225,6 +236,7 @@
             </div>
             <div class="stat-value">{{ status_counts.cancelled|default:0 }}</div>
             <div class="stat-label">ملغية</div>
+            </div>
         </div>
     </div>
 </div>

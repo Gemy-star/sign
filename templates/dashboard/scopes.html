@@ -4,21 +4,26 @@
 {% block title %}المجالات{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-bullseye"></i> المجالات
-    </h1>
-    <p class="page-subtitle">إدارة مجالات التطوير الشخصي</p>
-    <div class="page-actions">
-        <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
-            إضافة مجال جديد
-        </a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-bullseye"></i> المجالات
+                </h1>
+                <p class="page-subtitle">إدارة مجالات التطوير الشخصي</p>
+                <div class="page-actions">
+                    <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        إضافة مجال جديد
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- Statistics Cards -->
-<div class="row g-3 mb-4">
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="stat-card fade-in" style="animation-delay: 0.1s;">
         <div class="stat-header">
@@ -65,15 +70,16 @@
         <div class="stat-value">
             {% widthratio scopes.count 1 500 %}
         </div>
-        <div class="stat-label">الرسائل المرسلة</div>
+            <div class="stat-label">الرسائل المرسلة</div>
+        </div>
     </div>
-</div>
 
-<!-- Scopes by Category -->
-{% regroup scopes by get_category_display as scopes_by_category %}
+    <!-- Scopes by Category -->
+    {% regroup scopes by get_category_display as scopes_by_category %}
 
-{% for category in scopes_by_category %}
-<div class="mb-5">
+    {% for category in scopes_by_category %}
+    <div class="row mb-5">
+        <div class="col-12">
     <div class="d-flex align-items-center mb-4">
         <h2 class="h4 fw-bold mb-0" style="color: var(--color-secondary);">
             <i class="fas fa-folder-open"></i>
@@ -158,23 +164,28 @@
                 </div>
             </div>
         </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        </div>
     </div>
-</div>
-{% empty %}
-<div class="alert alert-info text-center py-5">
-    <i class="fas fa-inbox fa-3x mb-3"></i>
-    <h4>لا توجد مجالات</h4>
-    <p class="text-muted">لم يتم إنشاء أي مجالات بعد</p>
-    <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary mt-3">
-        <i class="fas fa-plus"></i> إضافة مجال جديد
-    </a>
-</div>
-{% endfor %}
+        {% empty %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5">
+                <i class="fas fa-inbox fa-3x mb-3"></i>
+                <h4>لا توجد مجالات</h4>
+                <p class="text-muted">لم يتم إنشاء أي مجالات بعد</p>
+                <a href="{% url 'dashboard:scope_create' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus"></i> إضافة مجال جديد
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 
-<!-- Category Distribution Chart -->
-{% if scopes %}
-<div class="row g-3 mt-5">
+    <!-- Category Distribution Chart -->
+    {% if scopes %}
+    <div class="row g-3 mt-5">
     <div class="col-12 col-lg-8">
         <div class="chart-card fade-in">
             <div class="chart-header">
@@ -201,11 +212,13 @@
                 <canvas id="usageChart"></canvas>
             </div>
         </div>
+        </div>
     </div>
-</div>
 
-<!-- Top Scopes Table -->
-<div class="table-card mt-4 fade-in">
+    <!-- Top Scopes Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-card fade-in">
     <div class="table-header">
         <h3 class="table-title">
             <i class="fas fa-trophy"></i>
@@ -259,10 +272,13 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+            </table>
+        </div>
+            </div>
+        </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}

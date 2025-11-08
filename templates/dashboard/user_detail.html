@@ -87,17 +87,23 @@
     </div>
 </div>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {% if messages %}
+    <div class="row">
+        <div class="col-12">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-{% endif %}
+    </div>
+    {% endif %}
 
-<!-- User Header -->
-<div class="user-header">
+    <!-- User Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="user-header">
     <div class="d-flex align-items-center">
         <div class="user-avatar-large">
             {{ user_obj.username|slice:":1"|upper }}
@@ -120,11 +126,13 @@
                     <span class="badge bg-danger">مدير عام</span>
                 {% endif %}
             </div>
+            </div>
+        </div>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="row">
+    <div class="row">
     <!-- User Information -->
     <div class="col-lg-6">
         <div class="user-info-card">
@@ -240,12 +248,14 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
-</div>
 
-<!-- Active Subscription -->
-{% if active_subscription %}
-<div class="user-info-card">
+    <!-- Active Subscription -->
+    {% if active_subscription %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="user-info-card">
     <h3 class="section-title">
         <i class="fas fa-crown"></i> الاشتراك النشط
     </h3>
@@ -268,13 +278,17 @@
                     عرض التفاصيل <i class="fas fa-arrow-left"></i>
                 </a>
             </div>
+            </div>
+        </div>
+            </div>
         </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
-<!-- Subscriptions List -->
-<div class="user-info-card">
+    <!-- Subscriptions List -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="user-info-card">
     <h3 class="section-title">
         <i class="fas fa-history"></i> سجل الاشتراكات ({{ subscriptions.count }})
     </h3>
@@ -319,13 +333,17 @@
                 </tbody>
             </table>
         </div>
-    {% else %}
-        <p class="text-muted text-center py-3">لا توجد اشتراكات</p>
-    {% endif %}
-</div>
+        {% else %}
+            <p class="text-muted text-center py-3">لا توجد اشتراكات</p>
+        {% endif %}
+            </div>
+        </div>
+    </div>
 
-<!-- Recent Messages -->
-<div class="user-info-card">
+    <!-- Recent Messages -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="user-info-card">
     <h3 class="section-title">
         <i class="fas fa-comment-dots"></i> الرسائل الأخيرة ({{ messages_list.count }})
     </h3>
@@ -374,14 +392,18 @@
                 </tbody>
             </table>
         </div>
-    {% else %}
-        <p class="text-muted text-center py-3">لا توجد رسائل</p>
-    {% endif %}
-</div>
+        {% else %}
+            <p class="text-muted text-center py-3">لا توجد رسائل</p>
+        {% endif %}
+            </div>
+        </div>
+    </div>
 
-<!-- Goals -->
-{% if goals %}
-<div class="user-info-card">
+    <!-- Goals -->
+    {% if goals %}
+    <div class="row">
+        <div class="col-12">
+            <div class="user-info-card">
     <h3 class="section-title">
         <i class="fas fa-bullseye"></i> الأهداف ({{ goals.count }})
     </h3>

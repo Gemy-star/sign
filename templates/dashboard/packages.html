@@ -4,22 +4,27 @@
 {% block title %}الباقات{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-box"></i> الباقات
-    </h1>
-    <p class="page-subtitle">إدارة باقات الاشتراك</p>
-    <div class="page-actions">
-        <a href="{% url 'dashboard:package_create' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
-            إضافة باقة جديدة
-        </a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-box"></i> الباقات
+                </h1>
+                <p class="page-subtitle">إدارة باقات الاشتراك</p>
+                <div class="page-actions">
+                    <a href="{% url 'dashboard:package_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        إضافة باقة جديدة
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- Packages Grid -->
-<!-- Desktop Grid View -->
-<div class="row g-3 d-none d-md-flex">
+    <!-- Packages Grid -->
+    <!-- Desktop Grid View -->
+    <div class="row g-3 d-none d-md-flex">
     {% for package in packages %}
     <div class="col-12 col-sm-6 col-lg-4 mb-4">
         <div class="card h-100 scale-in" style="animation-delay: {{ forloop.counter0|add:1|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s; border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); overflow: hidden; transition: all var(--transition-base);">
@@ -118,11 +123,12 @@
             </a>
         </div>
     </div>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
 
-<!-- Mobile Swiper Carousel -->
-<div class="d-md-none mb-4">
+    <!-- Mobile Swiper Carousel -->
+    <div class="row d-md-none mb-4">
+        <div class="col-12">
     {% if packages %}
     <div class="swiper packagesSwiper" style="padding: 1rem 0;">
         <div class="swiper-wrapper">
@@ -182,14 +188,17 @@
     <div class="alert alert-info text-center">
         <i class="fas fa-info-circle fa-2x mb-3"></i>
         <h4>لا توجد باقات</h4>
-        <p>لم يتم إنشاء أي باقات بعد</p>
+            <p>لم يتم إنشاء أي باقات بعد</p>
+        </div>
+        {% endif %}
+        </div>
     </div>
-    {% endif %}
-</div>
 
-<!-- Statistics Card -->
-{% if packages %}
-<div class="chart-card mt-4 fade-in">
+    <!-- Statistics Card -->
+    {% if packages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="chart-card fade-in">
     <div class="chart-header">
         <h3 class="chart-title">
             <i class="fas fa-chart-bar text-primary"></i>
@@ -230,10 +239,13 @@
                 </h3>
                 <p class="text-muted">إجمالي الإيرادات</p>
             </div>
+            </div>
+        </div>
+            </div>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}

@@ -4,16 +4,21 @@
 {% block title %}المستخدمون{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-users"></i> المستخدمون
-    </h1>
-    <p class="page-subtitle">إدارة حسابات المستخدمين</p>
-</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-users"></i> المستخدمون
+                </h1>
+                <p class="page-subtitle">إدارة حسابات المستخدمين</p>
+            </div>
+        </div>
+    </div>
 
-<!-- Statistics Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-lg-3">
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-3">
         <div class="stat-card fade-in" style="animation-delay: 0.1s;">
         <div class="stat-header">
             <div class="stat-icon primary">
@@ -77,11 +82,13 @@
             <i class="fas fa-arrow-up"></i>
             <span>+15%</span>
         </div>
+        </div>
     </div>
-</div>
 
-<!-- Users Table -->
-<div class="table-card fade-in">
+    <!-- Users Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card fade-in">
     <div class="table-header">
         <h3 class="table-title">
             <i class="fas fa-table"></i>
@@ -200,20 +207,27 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+            </table>
+        </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- User Activity Chart -->
-<div class="chart-card mt-4 fade-in">
+    <!-- User Activity Chart -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="chart-card fade-in">
     <div class="chart-header">
         <h3 class="chart-title">
             <i class="fas fa-chart-line text-primary"></i>
             نشاط المستخدمين
         </h3>
     </div>
-    <div class="chart-container">
-        <canvas id="userActivityChart"></canvas>
+                <div class="chart-container">
+                    <canvas id="userActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -108,16 +108,22 @@
     </div>
 </div>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    {% if messages %}
+    <div class="row">
+        <div class="col-12">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-{% endif %}
+    </div>
+    {% endif %}
 
-<div class="form-card">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-card">
     <form method="post" id="userForm">
         {% csrf_token %}
 
@@ -289,8 +295,11 @@
                 <i class="fas {% if is_edit %}fa-save{% else %}fa-plus{% endif %}"></i>
                 {% if is_edit %}حفظ التعديلات{% else %}إنشاء المستخدم{% endif %}
             </button>
+            </div>
+        </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
 {% endblock %}
 

@@ -4,15 +4,20 @@
 {% block title %}الرسائل{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-comments"></i> الرسائل التحفيزية
-    </h1>
-    <p class="page-subtitle">إدارة الرسائل المولدة بواسطة الذكاء الاصطناعي</p>
-</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-comments"></i> الرسائل التحفيزية
+                </h1>
+                <p class="page-subtitle">إدارة الرسائل المولدة بواسطة الذكاء الاصطناعي</p>
+            </div>
+        </div>
+    </div>
 
-<!-- Statistics Cards -->
-<div class="row g-3 mb-4">
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="stat-card fade-in" style="animation-delay: 0.1s;">
         <div class="stat-header">
@@ -54,12 +59,13 @@
             </div>
         </div>
         <div class="stat-value">{{ avg_rating|floatformat:1 }}</div>
-        <div class="stat-label">متوسط التقييم</div>
+            <div class="stat-label">متوسط التقييم</div>
+        </div>
     </div>
-</div>
 
-<!-- Filter Buttons -->
-<div class="mb-4">
+    <!-- Filter Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
     <div class="btn-group" role="group">
         <a href="{% url 'dashboard:messages' %}" class="btn {% if not message_type %}btn-primary{% else %}btn-outline{% endif %}">
             <i class="fas fa-list"></i> الكل
@@ -87,12 +93,15 @@
             <span class="badge" style="background: white; color: var(--color-secondary); margin-right: 0.5rem;">
                 {{ type_counts.custom|default:0 }}
             </span>
-        </a>
+            </a>
+        </div>
+        </div>
     </div>
-</div>
 
-<!-- Messages List -->
-<div class="table-card fade-in">
+    <!-- Messages List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card fade-in">
     <div class="table-header">
         <h3 class="table-title">
             <i class="fas fa-table"></i>
@@ -232,7 +241,10 @@
                 <p class="text-muted">لم يتم العثور على أي رسائل</p>
             </div>
         </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
