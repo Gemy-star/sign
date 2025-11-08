@@ -47,6 +47,14 @@
     --border-radius-lg: 0.75rem;
     --border-radius-xl: 1rem;
     --border-radius-full: 9999px;
+
+    /* Bootstrap Overrides */
+    --bs-primary: #eb672a;
+    --bs-primary-rgb: 235, 103, 42;
+    --bs-success: #48bb78;
+    --bs-warning: #ed8936;
+    --bs-danger: #f56565;
+    --bs-info: #4299e1;
 }
 
 /* ============================================================================
@@ -65,6 +73,62 @@ body {
     line-height: 1.6;
     direction: rtl;
     text-align: right;
+}
+
+/* ============================================================================
+   BOOTSTRAP OVERRIDES
+   ============================================================================ */
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+/* Breadcrumb Styling */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+    color: var(--color-text-light);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "‹";
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+}
+
+.breadcrumb-item a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    font-weight: 500;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--color-accent-dark);
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: var(--color-text-dark);
+    font-weight: 600;
+}
+
+/* Card Header with Primary Background */
+.card-header.bg-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent)) !important;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-header.bg-primary h5,
+.card-header.bg-primary h6 {
+    margin: 0;
+    font-weight: 600;
 }
 
 /* ============================================================================
