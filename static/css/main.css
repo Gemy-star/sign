@@ -956,11 +956,11 @@ body {
 }
 
 .loader-logo {
-    width: 120px;
-    height: 120px;
+    width: 180px;
+    height: 180px;
     object-fit: contain;
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-    animation: logoFloat 2s ease-in-out infinite, logoRotate 3s linear infinite;
+    animation: logoFloat 2s ease-in-out infinite;
 }
 
 .loader-text {
@@ -980,15 +980,6 @@ body {
     }
     50% {
         transform: translateY(-20px) scale(1.05);
-    }
-}
-
-@keyframes logoRotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
     }
 }
 
@@ -1059,12 +1050,13 @@ body {
 /* Responsive Loader */
 @media (max-width: 768px) {
     .loader-logo {
-        width: 80px;
-        height: 80px;
+        width: 140px;
+        height: 140px;
     }
 
     .loader-text {
-        font-size: 1rem;
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
     }
 }
 

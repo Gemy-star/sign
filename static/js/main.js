@@ -650,9 +650,11 @@ function showToast(message, type = 'info') {
  */
 const PageLoader = {
     loader: null,
+    startTime: null,
 
     init() {
         this.loader = document.getElementById('pageLoader');
+        this.startTime = Date.now();
 
         // Show loader immediately on page load
         this.show();
@@ -672,19 +674,21 @@ const PageLoader = {
 
     hide() {
         if (this.loader) {
-            // Add a small delay for smooth transition
+            // Ensure loader shows for at least 1 second
+            const elapsedTime = Date.now() - this.startTime;
+            const minimumDisplayTime = 1000; // 1 second
+            const remainingTime = Math.max(0, minimumDisplayTime - elapsedTime);
+
             setTimeout(() => {
                 this.loader.classList.remove('show');
                 this.loader.classList.add('hidden');
-            }, 300);
+            }, remainingTime + 300);
         }
     }
 };
 
 // Initialize page loader immediately
-PageLoader.init();
-
-// ============================================================================
+PageLoader.init();// ============================================================================
 // EXPORT FOR GLOBAL USE
 // ============================================================================
 
