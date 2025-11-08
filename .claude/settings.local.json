@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"c:\\WORK\\SELF\\sign\\core\\settings\\local.py\")",
+      "Bash(test:*)",
+      "Bash(python:*)",
+      "Bash(cat:*)",
+      "Bash(\"c:\\WORK\\SELF\\sign\\dashboard\\urls.py\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

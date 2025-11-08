@@ -1,0 +1,426 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}لوحة التحكم الرئيسية{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title fade-in">
+        <i class="fas fa-chart-line"></i> لوحة التحكم
+    </h1>
+    <p class="page-subtitle">نظرة عامة على إحصائيات النظام</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+        <div class="stat-header">
+            <div class="stat-icon primary">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="stat-value" id="totalUsers">{{ total_users }}</div>
+        <div class="stat-label">إجمالي المستخدمين</div>
+        <div class="stat-trend up">
+            <i class="fas fa-arrow-up"></i>
+            <span>+12%</span>
+        </div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+        <div class="stat-header">
+            <div class="stat-icon secondary">
+                <i class="fas fa-crown"></i>
+            </div>
+        </div>
+        <div class="stat-value" id="totalSubscriptions">{{ total_subscriptions }}</div>
+        <div class="stat-label">الاشتراكات النشطة</div>
+        <div class="stat-trend up">
+            <i class="fas fa-arrow-up"></i>
+            <span>+8%</span>
+        </div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+        <div class="stat-header">
+            <div class="stat-icon success">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+        </div>
+        <div class="stat-value" id="totalRevenue">{{ total_revenue|floatformat:2 }}</div>
+        <div class="stat-label">إجمالي الإيرادات (دولار)</div>
+        <div class="stat-trend up">
+            <i class="fas fa-arrow-up"></i>
+            <span>+24%</span>
+        </div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.4s;">
+        <div class="stat-header">
+            <div class="stat-icon warning">
+                <i class="fas fa-comments"></i>
+            </div>
+        </div>
+        <div class="stat-value" id="totalMessages">{{ total_messages }}</div>
+        <div class="stat-label">الرسائل المرسلة</div>
+        <div class="stat-trend up">
+            <i class="fas fa-arrow-up"></i>
+            <span>+15%</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="chart-card scale-in" style="animation-delay: 0.5s;">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-area text-primary"></i>
+                    نمو المستخدمين والإيرادات
+                </h3>
+                <div class="chart-filters">
+                    <button class="btn btn-sm btn-outline" data-period="7">7 أيام</button>
+                    <button class="btn btn-sm btn-outline active" data-period="30">30 يوم</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="chart-card scale-in" style="animation-delay: 0.6s;">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-pie text-secondary"></i>
+                    توزيع الباقات
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="packagesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Row -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="table-card slide-in-right" style="animation-delay: 0.7s;">
+            <div class="table-header">
+                <h3 class="table-title">
+                    <i class="fas fa-clock"></i>
+                    أحدث الاشتراكات
+                </h3>
+                <a href="{% url 'dashboard:subscriptions' %}" class="btn btn-sm btn-outline">
+                    عرض الكل
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>الباقة</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subscription in recent_subscriptions %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                                        {{ subscription.user.username|slice:":1"|upper }}
+                                    </div>
+                                    <strong>{{ subscription.user.username }}</strong>
+                                </div>
+                            </td>
+                            <td>{{ subscription.package.name }}</td>
+                            <td>
+                                {% if subscription.status == 'active' %}
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check-circle"></i> نشط
+                                    </span>
+                                {% elif subscription.status == 'expired' %}
+                                    <span class="badge badge-warning">
+                                        <i class="fas fa-clock"></i> منتهي
+                                    </span>
+                                {% elif subscription.status == 'cancelled' %}
+                                    <span class="badge badge-danger">
+                                        <i class="fas fa-times-circle"></i> ملغي
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-hourglass-half"></i> قيد الانتظار
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ subscription.created_at|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">لا توجد اشتراكات حديثة</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="table-card slide-in-left" style="animation-delay: 0.8s;">
+            <div class="table-header">
+                <h3 class="table-title">
+                    <i class="fas fa-comment-dots"></i>
+                    أحدث الرسائل
+                </h3>
+                <a href="{% url 'dashboard:messages' %}" class="btn btn-sm btn-outline">
+                    عرض الكل
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>المجال</th>
+                            <th>النوع</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in recent_messages %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-2" style="width: 32px; height: 32px; font-size: 0.875rem;">
+                                        {{ message.user.username|slice:":1"|upper }}
+                                    </div>
+                                    <strong>{{ message.user.username }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                {% if message.scope %}
+                                    <span class="badge badge-primary">
+                                        {{ message.scope.icon }} {{ message.scope.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if message.message_type == 'daily' %}
+                                    <span class="badge badge-info">يومي</span>
+                                {% elif message.message_type == 'goal_specific' %}
+                                    <span class="badge badge-success">هدف محدد</span>
+                                {% elif message.message_type == 'scope_based' %}
+                                    <span class="badge badge-warning">مجال</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">مخصص</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ message.created_at|date:"Y-m-d H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">لا توجد رسائل حديثة</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Prepare data from Django
+    const daysLabels = {{ days_labels|safe }};
+    const usersPerDay = {{ users_per_day|safe }};
+    const revenuePerDay = {{ revenue_per_day|safe }};
+    const packagesData = {{ packages_data|safe }};
+
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initGrowthChart();
+        initPackagesChart();
+        animateCounters();
+    });
+
+    // Growth Chart (Users and Revenue)
+    function initGrowthChart() {
+        const ctx = document.getElementById('growthChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: daysLabels,
+                datasets: [
+                    {
+                        label: 'المستخدمين الجدد',
+                        data: usersPerDay,
+                        borderColor: '#eb672a',
+                        backgroundColor: 'rgba(235, 103, 42, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'الإيرادات (دولار)',
+                        data: revenuePerDay,
+                        borderColor: '#815ba4',
+                        backgroundColor: 'rgba(129, 91, 164, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        bodyFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Packages Distribution Chart
+    function initPackagesChart() {
+        const ctx = document.getElementById('packagesChart');
+        if (!ctx) return;
+
+        const labels = packagesData.map(p => p.name);
+        const data = packagesData.map(p => p.sub_count);
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#eb672a',
+                        '#815ba4',
+                        '#ef8859',
+                        '#9a7cb6',
+                        '#cf4f13'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        bodyFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Animate counter numbers
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stat-value');
+        counters.forEach(counter => {
+            const target = parseFloat(counter.textContent.replace(/,/g, ''));
+            if (isNaN(target)) return;
+
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    counter.textContent = target.toLocaleString('en-US', {maximumFractionDigits: 2});
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(current).toLocaleString('en-US');
+                }
+            }, 20);
+        });
+    }
+</script>
+{% endblock %}

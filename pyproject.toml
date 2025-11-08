@@ -1,0 +1,22 @@
+[project]
+name = "sign"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mohamed Ismail",email = "mohamed.g.ismail@orange.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django (>=5.2.8,<6.0.0)",
+    "djangorestframework (>=3.16.1,<4.0.0)",
+    "drf-yasg (>=1.21.11,<2.0.0)",
+    "django-cors-headers (>=4.9.0,<5.0.0)",
+    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
+    "django-constance (>=4.3.3,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

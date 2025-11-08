@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}المجالات{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title fade-in">
+        <i class="fas fa-bullseye"></i> المجالات
+    </h1>
+    <p class="page-subtitle">إدارة مجالات التطوير الشخصي</p>
+    <div class="page-actions">
+        <a href="/admin/api/scope/add/" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            إضافة مجال جديد
+        </a>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="stats-grid mb-4">
+    <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+        <div class="stat-header">
+            <div class="stat-icon primary">
+                <i class="fas fa-layer-group"></i>
+            </div>
+        </div>
+        <div class="stat-value">{{ scopes.count }}</div>
+        <div class="stat-label">إجمالي المجالات</div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+        <div class="stat-header">
+            <div class="stat-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+        <div class="stat-value">
+            {{ scopes|length }}
+        </div>
+        <div class="stat-label">مجالات نشطة</div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+        <div class="stat-header">
+            <div class="stat-icon secondary">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+        <div class="stat-value">
+            {% widthratio scopes.count 1 100 %}
+        </div>
+        <div class="stat-label">إجمالي الاشتراكات</div>
+    </div>
+
+    <div class="stat-card fade-in" style="animation-delay: 0.4s;">
+        <div class="stat-header">
+            <div class="stat-icon info">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+        </div>
+        <div class="stat-value">
+            {% widthratio scopes.count 1 500 %}
+        </div>
+        <div class="stat-label">الرسائل المرسلة</div>
+    </div>
+</div>
+
+<!-- Scopes by Category -->
+{% regroup scopes by get_category_display as scopes_by_category %}
+
+{% for category in scopes_by_category %}
+<div class="mb-5">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="h4 fw-bold mb-0" style="color: var(--color-secondary);">
+            <i class="fas fa-folder-open"></i>
+            {{ category.grouper }}
+        </h2>
+        <div class="me-auto"></div>
+        <span class="badge badge-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
+            {{ category.list|length }} مجال
+        </span>
+    </div>
+
+    <div class="row">
+        {% for scope in category.list %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 scale-in" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); transition: all var(--transition-base); animation-delay: {{ forloop.counter0|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s;">
+                <div class="card-body p-4">
+                    <!-- Icon & Title -->
+                    <div class="text-center mb-3">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">
+                            {{ scope.icon|default:"📌" }}
+                        </div>
+                        <h3 class="h5 fw-bold" style="color: var(--color-primary);">
+                            {{ scope.name }}
+                        </h3>
+                        <span class="badge" style="background: linear-gradient(135deg, var(--color-secondary), var(--color-purple-light)); color: white;">
+                            {{ scope.get_category_display }}
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4" style="min-height: 80px;">
+                        <p class="text-muted" style="line-height: 1.8;">
+                            {{ scope.description|truncatewords:20 }}
+                        </p>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="border-top pt-3 mb-3">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div style="background: rgba(235, 103, 42, 0.1); padding: 0.75rem; border-radius: var(--border-radius-md);">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary);">
+                                        {{ scope.subscription_count|default:0 }}
+                                    </div>
+                                    <div style="font-size: 0.813rem; color: var(--color-text-light);">اشتراك</div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div style="background: rgba(129, 91, 164, 0.1); padding: 0.75rem; border-radius: var(--border-radius-md);">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-secondary);">
+                                        {{ scope.message_count|default:0 }}
+                                    </div>
+                                    <div style="font-size: 0.813rem; color: var(--color-text-light);">رسالة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meta Info -->
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-alt"></i>
+                            تم الإنشاء: {{ scope.created_at|date:"Y-m-d" }}
+                        </small>
+                    </div>
+
+                    <!-- Actions & Status -->
+                    <div class="d-flex gap-2 align-items-center">
+                        <a href="/admin/api/scope/{{ scope.id }}/change/" class="btn btn-outline flex-fill">
+                            <i class="fas fa-edit"></i> تعديل
+                        </a>
+                        {% if scope.is_active %}
+                        <span class="badge badge-success">
+                            <i class="fas fa-check-circle"></i> نشط
+                        </span>
+                        {% else %}
+                        <span class="badge badge-danger">
+                            <i class="fas fa-times-circle"></i> غير نشط
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% empty %}
+<div class="alert alert-info text-center py-5">
+    <i class="fas fa-inbox fa-3x mb-3"></i>
+    <h4>لا توجد مجالات</h4>
+    <p class="text-muted">لم يتم إنشاء أي مجالات بعد</p>
+    <a href="/admin/api/scope/add/" class="btn btn-primary mt-3">
+        <i class="fas fa-plus"></i> إضافة مجال جديد
+    </a>
+</div>
+{% endfor %}
+
+<!-- Category Distribution Chart -->
+{% if scopes %}
+<div class="row mt-5">
+    <div class="col-lg-8">
+        <div class="chart-card fade-in">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-bar text-primary"></i>
+                    توزيع المجالات حسب الفئة
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="chart-card fade-in" style="animation-delay: 0.2s;">
+            <div class="chart-header">
+                <h3 class="chart-title">
+                    <i class="fas fa-chart-pie text-secondary"></i>
+                    نسبة الاستخدام
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="usageChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Scopes Table -->
+<div class="table-card mt-4 fade-in">
+    <div class="table-header">
+        <h3 class="table-title">
+            <i class="fas fa-trophy"></i>
+            المجالات الأكثر شعبية
+        </h3>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>الترتيب</th>
+                    <th>المجال</th>
+                    <th>الفئة</th>
+                    <th>الاشتراكات</th>
+                    <th>الرسائل</th>
+                    <th>معدل النشاط</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scope in scopes|slice:":10" %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: var(--border-radius-full); background: {% if forloop.counter == 1 %}linear-gradient(135deg, #ffc107, #ff9800){% elif forloop.counter == 2 %}linear-gradient(135deg, #bdbdbd, #9e9e9e){% elif forloop.counter == 3 %}linear-gradient(135deg, #ff6f00, #e65100){% else %}var(--color-bg-light){% endif %}; font-weight: 700; color: {% if forloop.counter <= 3 %}white{% else %}var(--color-text-dark){% endif %};">
+                            {{ forloop.counter }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span style="font-size: 1.5rem;">{{ scope.icon|default:"📌" }}</span>
+                            <div>
+                                <strong>{{ scope.name }}</strong><br>
+                                <small class="text-muted">{{ scope.description|truncatewords:8 }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-primary">{{ scope.get_category_display }}</span>
+                    </td>
+                    <td>
+                        <strong style="color: var(--color-primary);">{{ scope.subscription_count|default:0 }}</strong>
+                    </td>
+                    <td>
+                        <strong style="color: var(--color-secondary);">{{ scope.message_count|default:0 }}</strong>
+                    </td>
+                    <td>
+                        {% widthratio scope.message_count|default:1 scope.subscription_count|default:1 1 %}
+                        <div class="mt-1" style="background: var(--color-bg-light); height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, var(--color-success), var(--color-warning)); height: 100%; width: {% widthratio scope.message_count|default:0 100 1 %}%; max-width: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add hover effect to scope cards
+        const cards = document.querySelectorAll('.col-lg-4 .card');
+        for (const card of cards) {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = 'var(--shadow-xl)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'var(--shadow-md)';
+            });
+        }
+
+        // Initialize charts
+        initCategoryChart();
+        initUsageChart();
+    });
+
+    // Category Distribution Chart
+    function initCategoryChart() {
+        const ctx = document.getElementById('categoryChart');
+        if (!ctx) return;
+
+        // Sample data - replace with actual data from backend
+        const categories = ['النمو العقلي', 'الصحة البدنية', 'التطوير المهني', 'النمو المالي', 'العلاقات', 'الروحانية', 'الإبداع', 'نمط الحياة'];
+        const counts = [8, 6, 7, 5, 9, 4, 6, 7];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: 'عدد المجالات',
+                    data: counts,
+                    backgroundColor: 'rgba(235, 103, 42, 0.7)',
+                    borderColor: '#eb672a',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        bodyFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Usage Distribution Chart
+    function initUsageChart() {
+        const ctx = document.getElementById('usageChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['مستخدم بكثرة', 'مستخدم', 'نادر الاستخدام'],
+                datasets: [{
+                    data: [35, 45, 20],
+                    backgroundColor: [
+                        '#48bb78',
+                        '#eb672a',
+                        '#815ba4'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic'
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        bodyFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}الاشتراكات{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title fade-in">
+        <i class="fas fa-crown"></i> الاشتراكات
+    </h1>
+    <p class="page-subtitle">إدارة اشتراكات المستخدمين</p>
+</div>
+
+<!-- Filter Buttons -->
+<div class="mb-4">
+    <div class="btn-group" role="group">
+        <a href="{% url 'dashboard:subscriptions' %}" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">
+            <i class="fas fa-list"></i> الكل
+            <span class="badge" style="background: white; color: var(--color-primary); margin-right: 0.5rem;">
+                {{ status_counts.active|default:0|add:status_counts.expired|default:0|add:status_counts.cancelled|default:0|add:status_counts.pending|default:0|add:status_counts.failed|default:0 }}
+            </span>
+        </a>
+        <a href="?status=active" class="btn {% if status_filter == 'active' %}btn-primary{% else %}btn-outline{% endif %}">
+            <i class="fas fa-check-circle"></i> نشط
+            <span class="badge" style="background: white; color: var(--color-success); margin-right: 0.5rem;">
+                {{ status_counts.active|default:0 }}
+            </span>
+        </a>
+        <a href="?status=pending" class="btn {% if status_filter == 'pending' %}btn-primary{% else %}btn-outline{% endif %}">
+            <i class="fas fa-hourglass-half"></i> قيد الانتظار
+            <span class="badge" style="background: white; color: var(--color-info); margin-right: 0.5rem;">
+                {{ status_counts.pending|default:0 }}
+            </span>
+        </a>
+        <a href="?status=expired" class="btn {% if status_filter == 'expired' %}btn-primary{% else %}btn-outline{% endif %}">
+            <i class="fas fa-clock"></i> منتهي
+            <span class="badge" style="background: white; color: var(--color-warning); margin-right: 0.5rem;">
+                {{ status_counts.expired|default:0 }}
+            </span>
+        </a>
+        <a href="?status=cancelled" class="btn {% if status_filter == 'cancelled' %}btn-primary{% else %}btn-outline{% endif %}">
+            <i class="fas fa-times-circle"></i> ملغي
+            <span class="badge" style="background: white; color: var(--color-danger); margin-right: 0.5rem;">
+                {{ status_counts.cancelled|default:0 }}
+            </span>
+        </a>
+    </div>
+</div>
+
+<!-- Subscriptions Table -->
+<div class="table-card fade-in">
+    <div class="table-header">
+        <h3 class="table-title">
+            <i class="fas fa-table"></i>
+            {% if status_filter %}
+                الاشتراكات - {{ status_filter }}
+            {% else %}
+                جميع الاشتراكات
+            {% endif %}
+        </h3>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control" placeholder="بحث..." style="max-width: 300px;">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table" id="subscriptionsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>المستخدم</th>
+                    <th>الباقة</th>
+                    <th>المجالات</th>
+                    <th>الحالة</th>
+                    <th>تاريخ البداية</th>
+                    <th>تاريخ الانتهاء</th>
+                    <th>المبلغ</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscription in subscriptions %}
+                <tr class="subscription-row" data-id="{{ subscription.id }}">
+                    <td><strong>{{ subscription.id }}</strong></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar me-2" style="width: 36px; height: 36px; font-size: 0.875rem; background: linear-gradient(135deg, var(--color-primary), var(--color-accent));">
+                                {{ subscription.user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <strong>{{ subscription.user.username }}</strong><br>
+                                <small class="text-muted">{{ subscription.user.email }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color: var(--color-secondary);">{{ subscription.package.name }}</strong><br>
+                        <small class="text-muted">${{ subscription.package.price }} / {{ subscription.package.get_duration_display }}</small>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                            {% for scope in subscription.selected_scopes.all|slice:":3" %}
+                                <span class="badge badge-primary" style="font-size: 0.75rem;">
+                                    {{ scope.icon }} {{ scope.name }}
+                                </span>
+                            {% endfor %}
+                            {% if subscription.selected_scopes.count > 3 %}
+                                <span class="badge badge-info" style="font-size: 0.75rem;">
+                                    +{{ subscription.selected_scopes.count|add:"-3" }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if subscription.status == 'active' %}
+                            <span class="badge badge-success">
+                                <i class="fas fa-check-circle"></i> نشط
+                            </span>
+                        {% elif subscription.status == 'expired' %}
+                            <span class="badge badge-warning">
+                                <i class="fas fa-clock"></i> منتهي
+                            </span>
+                        {% elif subscription.status == 'cancelled' %}
+                            <span class="badge badge-danger">
+                                <i class="fas fa-times-circle"></i> ملغي
+                            </span>
+                        {% elif subscription.status == 'pending' %}
+                            <span class="badge badge-info">
+                                <i class="fas fa-hourglass-half"></i> قيد الانتظار
+                            </span>
+                        {% else %}
+                            <span class="badge badge-danger">
+                                <i class="fas fa-exclamation-circle"></i> فشل الدفع
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if subscription.start_date %}
+                            {{ subscription.start_date|date:"Y-m-d" }}<br>
+                            <small class="text-muted">{{ subscription.start_date|date:"H:i" }}</small>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if subscription.end_date %}
+                            {{ subscription.end_date|date:"Y-m-d" }}<br>
+                            <small class="text-muted">{{ subscription.end_date|date:"H:i" }}</small>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if subscription.amount_paid %}
+                            <strong style="color: var(--color-success);">${{ subscription.amount_paid }}</strong>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'dashboard:subscription_detail' subscription.id %}" class="btn btn-sm btn-primary" title="عرض التفاصيل">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="/admin/api/subscription/{{ subscription.id }}/change/" class="btn btn-sm btn-outline" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5>لا توجد اشتراكات</h5>
+                        <p class="text-muted">لم يتم العثور على أي اشتراكات</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mt-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card scale-in" style="animation-delay: 0.1s;">
+            <div class="stat-header">
+                <div class="stat-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ status_counts.active|default:0 }}</div>
+            <div class="stat-label">اشتراكات نشطة</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card scale-in" style="animation-delay: 0.2s;">
+            <div class="stat-header">
+                <div class="stat-icon warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ status_counts.expired|default:0 }}</div>
+            <div class="stat-label">اشتراكات منتهية</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card scale-in" style="animation-delay: 0.3s;">
+            <div class="stat-header">
+                <div class="stat-icon info">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ status_counts.pending|default:0 }}</div>
+            <div class="stat-label">قيد الانتظار</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card scale-in" style="animation-delay: 0.4s;">
+            <div class="stat-header">
+                <div class="stat-icon secondary">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+            </div>
+            <div class="stat-value">{{ status_counts.cancelled|default:0 }}</div>
+            <div class="stat-label">ملغية</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('.subscription-row');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                for (const row of tableRows) {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // Add fade-in animation to rows
+        tableRows.forEach((row, index) => {
+            row.style.animation = `fadeIn 0.3s ease-out ${index * 0.05}s both`;
+        });
+    });
+</script>
+{% endblock %}

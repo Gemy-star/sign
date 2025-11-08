@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}الباقات{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title fade-in">
+        <i class="fas fa-box"></i> الباقات
+    </h1>
+    <p class="page-subtitle">إدارة باقات الاشتراك</p>
+    <div class="page-actions">
+        <a href="/admin/api/package/add/" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            إضافة باقة جديدة
+        </a>
+    </div>
+</div>
+
+<!-- Packages Grid -->
+<div class="row">
+    {% for package in packages %}
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card h-100 scale-in" style="animation-delay: {{ forloop.counter0|add:1|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s; border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); overflow: hidden; transition: all var(--transition-base);">
+            {% if package.is_featured %}
+            <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; text-align: center; padding: 0.5rem; font-weight: 600;">
+                <i class="fas fa-star"></i> باقة مميزة
+            </div>
+            {% endif %}
+
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="h4 fw-bold mb-3" style="color: var(--color-secondary);">{{ package.name }}</h3>
+                    <div class="mb-3">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: var(--color-primary);">
+                            ${{ package.price }}
+                        </span>
+                        <span style="color: var(--color-text-light);">/{{ package.get_duration_display }}</span>
+                    </div>
+                    <p style="color: var(--color-text-light);">{{ package.description }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="h6 fw-bold mb-3" style="color: var(--color-text-dark);">
+                        <i class="fas fa-check-circle text-success"></i> المميزات:
+                    </h5>
+                    <ul style="list-style: none; padding: 0;">
+                        <li class="mb-2">
+                            <i class="fas fa-bullseye" style="color: var(--color-primary); margin-left: 0.5rem;"></i>
+                            <strong>{{ package.max_scopes }}</strong> مجالات كحد أقصى
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-comment-dots" style="color: var(--color-secondary); margin-left: 0.5rem;"></i>
+                            <strong>{{ package.messages_per_day }}</strong> رسالة يومية
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-{% if package.custom_goals_enabled %}check{% else %}times{% endif %}-circle" style="color: {% if package.custom_goals_enabled %}var(--color-success){% else %}var(--color-text-muted){% endif %}; margin-left: 0.5rem;"></i>
+                            أهداف مخصصة
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-{% if package.priority_support %}check{% else %}times{% endif %}-circle" style="color: {% if package.priority_support %}var(--color-success){% else %}var(--color-text-muted){% endif %}; margin-left: 0.5rem;"></i>
+                            دعم فني مميز
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-calendar-alt" style="color: var(--color-warning); margin-left: 0.5rem;"></i>
+                            <strong>{{ package.duration_days }}</strong> يوم
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="border-top pt-3">
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <div style="background: rgba(235, 103, 42, 0.1); padding: 0.75rem; border-radius: var(--border-radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-primary);">
+                                    {{ package.active_subs|default:0 }}
+                                </div>
+                                <div style="font-size: 0.813rem; color: var(--color-text-light);">اشتراك نشط</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="background: rgba(129, 91, 164, 0.1); padding: 0.75rem; border-radius: var(--border-radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-secondary);">
+                                    ${{ package.total_revenue|default:0|floatformat:0 }}
+                                </div>
+                                <div style="font-size: 0.813rem; color: var(--color-text-light);">إجمالي الإيرادات</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="/admin/api/package/{{ package.id }}/change/" class="btn btn-outline flex-fill">
+                        <i class="fas fa-edit"></i> تعديل
+                    </a>
+                    {% if package.is_active %}
+                    <span class="badge badge-success d-flex align-items-center">
+                        <i class="fas fa-check-circle me-1"></i> نشط
+                    </span>
+                    {% else %}
+                    <span class="badge badge-danger d-flex align-items-center">
+                        <i class="fas fa-times-circle me-1"></i> غير نشط
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle fa-2x mb-3"></i>
+            <h4>لا توجد باقات</h4>
+            <p>لم يتم إنشاء أي باقات بعد</p>
+            <a href="/admin/api/package/add/" class="btn btn-primary mt-3">
+                <i class="fas fa-plus"></i> إضافة باقة جديدة
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Statistics Card -->
+{% if packages %}
+<div class="chart-card mt-4 fade-in">
+    <div class="chart-header">
+        <h3 class="chart-title">
+            <i class="fas fa-chart-bar text-primary"></i>
+            إحصائيات الباقات
+        </h3>
+    </div>
+    <div style="padding: 1.5rem;">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="stat-icon primary mx-auto mb-3">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="fw-bold" style="color: var(--color-primary);">{{ packages.count }}</h3>
+                <p class="text-muted">إجمالي الباقات</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-icon success mx-auto mb-3">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3 class="fw-bold" style="color: var(--color-success);">{{ packages|length }}</h3>
+                <p class="text-muted">باقات نشطة</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-icon secondary mx-auto mb-3">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="fw-bold" style="color: var(--color-secondary);">
+                    {% widthratio packages|length 1 100 %}
+                </h3>
+                <p class="text-muted">معدل الاشتراكات</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-icon warning mx-auto mb-3">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3 class="fw-bold" style="color: var(--color-warning);">
+                    ${% for package in packages %}{% if package.total_revenue %}{{ package.total_revenue|add:0 }}{% endif %}{% endfor %}
+                </h3>
+                <p class="text-muted">إجمالي الإيرادات</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add hover effect to package cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = 'var(--shadow-xl)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'var(--shadow-md)';
+            });
+        });
+    });
+</script>
+{% endblock %}
