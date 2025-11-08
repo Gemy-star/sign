@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -77,3 +78,9 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='api-root'),
 ]
+
+# Django Silk profiler (only in development)
+if settings.DEBUG:
+    urlpatterns += [
+        path('silk/', include('silk.urls', namespace='silk')),
+    ]

@@ -1,21 +1,40 @@
 [project]
 name = "sign"
 version = "0.1.0"
-description = ""
-authors = [
-    {name = "Mohamed Ismail",email = "mohamed.g.ismail@orange.com"}
-]
+description = "A DRF API application for a personal development and self-improvement platform with AI-generated content."
+authors = [{name = "Mohamed Ismail", email = "mohamed.g.ismail@orange.com"}]
 readme = "README.md"
 requires-python = ">=3.11"
+
 dependencies = [
     "django (>=5.2.8,<6.0.0)",
     "djangorestframework (>=3.16.1,<4.0.0)",
     "drf-yasg (>=1.21.11,<2.0.0)",
     "django-cors-headers (>=4.9.0,<5.0.0)",
     "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
-    "django-constance (>=4.3.3,<5.0.0)"
+    "django-constance (>=4.3.3,<5.0.0)",
+    "openai (>=2.7.1,<3.0.0)",
+    "redis (>=7.0.1,<8.0.0)",
+    "django-redis (>=6.0.0,<7.0.0)"
 ]
 
+[tool.poetry]
+packages = [
+    {include = "api"},
+    {include = "core"},
+    {include = "dashboard"},
+]
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.3.0"
+django-silk = "^5.4.3"
+djlint = "^1.36.4"
+bandit = "^1.7.6"
+coverage = "^7.6.0"
+black = "^25.9.0"
+
+[tool.poetry.group.prod.dependencies]
+mysqlclient = "^2.2.7"
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -68,10 +68,19 @@ SERVER_EMAIL = os.environ.get('SERVER_EMAIL', 'admin@motivationalapp.com')
 # Cache - Redis for production
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1'),
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 50,
+                'retry_on_timeout': True,
+            },
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+            'IGNORE_EXCEPTIONS': True,  # Don't crash if Redis is down
         },
         'KEY_PREFIX': 'motivational_app',
         'TIMEOUT': 300,
@@ -81,6 +90,8 @@ CACHES = {
 # Session - Redis for production
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = False
 
 # Static files - Production configuration
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -215,3 +226,21 @@ if not SITE_URL or not SITE_URL.startswith('https://'):
 print("Running in PRODUCTION mode")
 print(f"Allowed Hosts: {ALLOWED_HOSTS}")
 print(f"Database: PostgreSQL at {DATABASES['default']['HOST']}")
+print(f"Cache: Redis at {CACHES['default']['LOCATION']}")
+
+# Redis health check (optional)
+try:
+    from django_redis import get_redis_connection
+    redis_conn = get_redis_connection("default")
+    redis_conn.ping()
+    print("✓ Redis connection successful")
+except Exception as e:
+    print(f"⚠ Warning: Redis connection failed: {e}")
+    print("  Falling back to database cache")
+    # Fallback to database cache if Redis is not available
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'cache_table',
+        }
+    }

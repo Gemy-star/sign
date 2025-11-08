@@ -34,12 +34,21 @@ CORS_ALLOW_CREDENTIALS = True
 # Email Backend - Console for local development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Cache - Dummy cache for development
+# Cache - Local memory cache for development
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
     }
 }
+
+# Session - Database backend for local development
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
 # Security Settings (relaxed for local development)
 SECURE_SSL_REDIRECT = False
@@ -47,11 +56,16 @@ SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# Debug Toolbar (optional - uncomment if you want to use it)
-# INSTALLED_APPS += ['debug_toolbar']
-# MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
-# INTERNAL_IPS = ['127.0.0.1', 'localhost']
+INSTALLED_APPS += ['silk']
+MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = False  # Disable binary profiler to avoid file issues
+SILKY_PYTHON_PROFILER_RESULT_PATH = BASE_DIR / 'profiles'
+SILKY_META = True
+SILKY_INTERCEPT_PERCENT = 100  # Profile 100% of requests in development
+SILKY_MAX_REQUEST_BODY_SIZE = -1  # No limit on request body size
+SILKY_MAX_RESPONSE_BODY_SIZE = -1  # No limit on response body size
+SILKY_MAX_RECORDED_REQUESTS = 10000  # Keep last 10000 requests
 
 # Django Extensions (optional - uncomment if installed)
 # INSTALLED_APPS += ['django_extensions']
