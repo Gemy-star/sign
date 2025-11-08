@@ -57,7 +57,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow framing from same origin for Swagger UI
 
 # Email Backend - SendGrid for production
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -90,13 +90,34 @@ SESSION_CACHE_ALIAS = 'default'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_SAVE_EVERY_REQUEST = False
 
+# Authentication URLs
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
+
 # Static files - Production configuration
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+# Use WhiteNoise instead of ManifestStaticFilesStorage for better compatibility
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Media files - Production configuration
 # Consider using cloud storage (S3, Google Cloud Storage, etc.)
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Swagger Settings - Allow CDN resources
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'PERSIST_AUTH': True,
+}
 
 # Optional: AWS S3 Configuration
 # Uncomment and configure if using django-storages with S3
@@ -181,7 +202,7 @@ LOGGING = {
 
 # Admin notification emails
 ADMINS = [
-    ('Admin', os.environ.get('ADMIN_EMAIL', 'admin@motivationalapp.com')),
+    ('Admin', os.environ.get('ADMIN_EMAIL', 'admin@sign-sa.net')),
 ]
 MANAGERS = ADMINS
 

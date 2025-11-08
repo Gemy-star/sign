@@ -1,5 +1,5 @@
 /* ============================================================================
-   MOTIVATIONAL MESSAGES DASHBOARD - MAIN JAVASCRIPT
+   SIGN SA DASHBOARD - MAIN JAVASCRIPT
    ============================================================================ */
 
 // Global Chart.js defaults configuration

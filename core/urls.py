@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -25,32 +26,33 @@ from rest_framework_simplejwt.views import (
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from dashboard import views as dashboard_views
 
 # Swagger/OpenAPI Schema
 schema_view = get_schema_view(
     openapi.Info(
-        title="Motivational Messages API",
+        title="Sign SA API",
         default_version='v1',
         description="""
-        ## Welcome to the Motivational Messages API
+        ## Welcome to the Sign SA API
 
         This API provides a comprehensive subscription-based platform for personal development
-        and motivation. Users can subscribe to packages, select their focus areas (scopes),
-        set personal goals, and receive AI-generated motivational messages.
+        and growth. Users can subscribe to packages, select their focus areas (scopes),
+        set personal goals, and receive AI-generated messages.
 
         ### Key Features:
         - **Subscription Management**: Multiple package tiers with different features
         - **Personal Development Scopes**: 8 life domains including mental, physical, career, financial, etc.
         - **Custom Goals**: Set and track personal development goals
-        - **AI-Generated Messages**: Personalized motivational content powered by ChatGPT
+        - **AI-Generated Messages**: Personalized content powered by ChatGPT
         - **Payment Integration**: Secure payments via Tap Payment Gateway
 
         ### Authentication:
         This API uses JWT (JSON Web Token) authentication. Obtain your token from `/api/auth/token/`
         and include it in the Authorization header: `Bearer <your_token>`
         """,
-        terms_of_service="https://www.example.com/terms/",
-        contact=openapi.Contact(email="support@motivationalapp.com"),
+        terms_of_service="https://www.sign-sa.net/terms/",
+        contact=openapi.Contact(email="support@sign-sa.net"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
@@ -58,6 +60,13 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Root URL - Redirect to dashboard
+    path('', dashboard_views.home_redirect, name='home'),
+
+    # Authentication
+    path('login/', dashboard_views.login_view, name='login'),
+    path('logout/', dashboard_views.logout_view, name='logout'),
+
     # Admin
     path('admin/', admin.site.urls),
 
@@ -76,11 +85,16 @@ urlpatterns = [
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='api-root'),
+    path('api-docs/', schema_view.with_ui('swagger', cache_timeout=0), name='api-docs'),
 ]
 
-# Django Silk profiler (only in development)
+# Serve static and media files in development
 if settings.DEBUG:
+    from django.conf.urls.static import static
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    # Django Silk profiler (only in development)
     urlpatterns += [
         path('silk/', include('silk.urls', namespace='silk')),
     ]

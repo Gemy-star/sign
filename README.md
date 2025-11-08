@@ -1,6 +1,6 @@
-# Motivational Messages API
+# Sign SA API
 
-A comprehensive Django REST Framework API for a subscription-based personal development and motivational messaging platform. The system integrates with OpenAI's ChatGPT for AI-generated motivational content and Tap Payment Gateway for secure subscription management.
+A comprehensive Django REST Framework API for a subscription-based personal development and messaging platform. The system integrates with OpenAI's ChatGPT for AI-generated content and Tap Payment Gateway for secure subscription management.
 
 ## Features
 

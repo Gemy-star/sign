@@ -173,7 +173,7 @@ class UserGoal(models.Model):
 
 class AIMessage(models.Model):
     """
-    AI-generated motivational messages based on scopes and goals
+    AI-generated messages based on scopes and goals
     """
     MESSAGE_TYPES = [
         ('daily', 'Daily Motivation'),

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Count, Sum, Avg, Q
 from django.utils import timezone
@@ -10,6 +12,48 @@ from api.models import (
     AIMessage, PaymentTransaction
 )
 from django.contrib.auth.models import User
+
+
+def home_redirect(request):
+    """Redirect root URL to dashboard or login"""
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('dashboard:home')
+    return redirect('login')
+
+
+def login_view(request):
+    """Custom login view"""
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect('dashboard:home')
+        else:
+            logout(request)
+            messages.warning(request, 'يجب أن تكون موظفًا للوصول إلى لوحة التحكم')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            if user.is_staff:
+                login(request, user)
+                next_url = request.GET.get('next', 'dashboard:home')
+                return redirect(next_url)
+            else:
+                messages.error(request, 'يجب أن تكون موظفًا للوصول إلى لوحة التحكم')
+        else:
+            messages.error(request, 'اسم المستخدم أو كلمة المرور غير صحيحة')
+
+    return render(request, 'dashboard/login.html')
+
+
+def logout_view(request):
+    """Logout view"""
+    logout(request)
+    messages.success(request, 'تم تسجيل الخروج بنجاح')
+    return redirect('login')
 
 
 @staff_member_required

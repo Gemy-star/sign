@@ -147,6 +147,11 @@ SWAGGER_SETTINGS = {
     'PERSIST_AUTH': True,
 }
 
+# Authentication URLs
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
+
 # Django Constance - Dynamic Settings
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
@@ -214,12 +219,12 @@ CONSTANCE_CONFIG = {
         str
     ),
     'SITE_NAME': (
-        'Motivational Messages',
+        'Sign SA',
         'Site name displayed in emails and notifications',
         str
     ),
     'SUPPORT_EMAIL': (
-        'support@motivationalapp.com',
+        'support@sign-sa.net',
         'Support email address',
         str
     ),
