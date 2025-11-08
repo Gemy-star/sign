@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -216,7 +217,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <img src="/static/images/logo-dark.png" alt="Sign SA Logo" onerror="this.style.display='none'">
+                <img src="{% static 'images/logo-dark.png' %}" alt="Sign SA Logo" onerror="this.style.display='none'">
                 <h2>لوحة التحكم</h2>
                 <p>مرحباً بك في نظام Sign SA</p>
             </div>
@@ -281,6 +282,11 @@
             </div>
 
             <div class="login-footer">
+                <p class="mb-2">
+                    <a href="{% url 'dashboard:privacy_policy' %}" style="color: #667eea; text-decoration: none; margin: 0 10px;">سياسة الخصوصية</a>
+                    •
+                    <a href="{% url 'dashboard:terms_conditions' %}" style="color: #667eea; text-decoration: none; margin: 0 10px;">الشروط والأحكام</a>
+                </p>
                 <p class="mb-0">
                     © 2025 Sign SA. جميع الحقوق محفوظة.
                 </p>

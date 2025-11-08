@@ -56,6 +56,16 @@ def logout_view(request):
     return redirect('login')
 
 
+def privacy_policy(request):
+    """Privacy policy page"""
+    return render(request, 'dashboard/privacy_policy.html')
+
+
+def terms_conditions(request):
+    """Terms and conditions page"""
+    return render(request, 'dashboard/terms_conditions.html')
+
+
 @staff_member_required
 def dashboard_home(request):
     """Dashboard home page with statistics and charts"""

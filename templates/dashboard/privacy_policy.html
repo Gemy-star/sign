@@ -1,0 +1,356 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "سياسة الخصوصية" %} - Sign SA</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+    <!-- Bootstrap 5 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6.4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- IBM Plex Sans Arabic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .policy-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .policy-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .policy-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .policy-header img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .policy-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .policy-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .policy-body {
+            padding: 40px;
+        }
+
+        .policy-section {
+            margin-bottom: 30px;
+        }
+
+        .policy-section h2 {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .policy-section h3 {
+            color: #764ba2;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .policy-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .policy-section ul {
+            list-style: none;
+            padding-right: 0;
+        }
+
+        .policy-section ul li {
+            padding: 10px 0;
+            padding-right: 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .policy-section ul li:before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 0;
+            color: #667eea;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border-right: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #333;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .policy-footer {
+            padding: 20px 40px;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .policy-body {
+                padding: 30px 20px;
+            }
+
+            .policy-header h1 {
+                font-size: 26px;
+            }
+
+            .policy-section h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="policy-container">
+        <div class="policy-card">
+            <div class="policy-header">
+                <img src="{% static 'images/logo-dark.png' %}" alt="Sign SA Logo" onerror="this.style.display='none'">
+                <h1>{% trans "سياسة الخصوصية" %}</h1>
+              <p>{% trans "آخر تحديث:" %} {% now "j F Y" %}</p>
+            </div>
+
+            <div class="policy-body">
+                <div class="policy-section">
+                    <h2>{% trans "1. المقدمة" %}</h2>
+                    <p>
+                        {% trans "نحن في Sign SA نلتزم بحماية خصوصيتك وأمان بياناتك الشخصية. توضح سياسة الخصوصية هذه كيفية جمعنا واستخدامنا وحمايتنا ومشاركتنا للمعلومات الشخصية التي نحصل عليها من خلال منصتنا." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "2. المعلومات التي نجمعها" %}</h2>
+                    <h3>{% trans "2.1 معلومات الحساب" %}</h3>
+                    <ul>
+                        <li>{% trans "الاسم الكامل وبيانات الاتصال" %}</li>
+                        <li>{% trans "عنوان البريد الإلكتروني" %}</li>
+                        <li>{% trans "كلمة المرور المشفرة" %}</li>
+                        <li>{% trans "معلومات الاشتراك والباقة المختارة" %}</li>
+                    </ul>
+
+                    <h3>{% trans "2.2 معلومات الاستخدام" %}</h3>
+                    <ul>
+                        <li>{% trans "الأهداف الشخصية والمجالات المختارة للتطوير" %}</li>
+                        <li>{% trans "سجل الرسائل التحفيزية المستلمة" %}</li>
+                        <li>{% trans "تفاعلاتك مع المحتوى (قراءة، تفضيل، تقييم)" %}</li>
+                        <li>{% trans "بيانات التقدم والإحصائيات" %}</li>
+                    </ul>
+
+                    <h3>{% trans "2.3 معلومات الدفع" %}</h3>
+                    <p>
+                        {% trans "يتم معالجة معلومات الدفع بشكل آمن من خلال بوابة الدفع Tap Payment. نحن لا نخزن تفاصيل البطاقة الائتمانية الكاملة على خوادمنا." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "3. كيفية استخدام المعلومات" %}</h2>
+                    <ul>
+                        <li>{% trans "توفير وتحسين خدماتنا" %}</li>
+                        <li>{% trans "إنشاء محتوى مخصص باستخدام تقنية الذكاء الاصطناعي (OpenAI ChatGPT)" %}</li>
+                        <li>{% trans "معالجة الاشتراكات والمدفوعات" %}</li>
+                        <li>{% trans "إرسال إشعارات وتحديثات مهمة" %}</li>
+                        <li>{% trans "تحليل أنماط الاستخدام لتحسين التجربة" %}</li>
+                        <li>{% trans "حماية الأمان ومنع الاحتيال" %}</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "4. التكامل مع الذكاء الاصطناعي" %}</h2>
+                    <div class="highlight-box">
+                        <p>
+                            {% trans "نستخدم OpenAI API لإنشاء رسائل تحفيزية مخصصة. يتم إرسال معلومات محددة (المجالات، الأهداف، التفضيلات) إلى OpenAI لإنشاء محتوى ذي صلة. نحن نلتزم بسياسات خصوصية OpenAI ونتأكد من عدم مشاركة معلومات تعريفية حساسة." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "5. مشاركة المعلومات" %}</h2>
+                    <p>{% trans "نحن لا نبيع أو نؤجر معلوماتك الشخصية لأطراف ثالثة. قد نشارك المعلومات فقط في الحالات التالية:" %}</p>
+                    <ul>
+                        <li>{% trans "مع مزودي الخدمات الموثوقين (Tap Payment، OpenAI) لتشغيل منصتنا" %}</li>
+                        <li>{% trans "عند الطلب القانوني أو الامتثال للوائح" %}</li>
+                        <li>{% trans "لحماية حقوقنا أو سلامة المستخدمين" %}</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "6. أمان البيانات" %}</h2>
+                    <ul>
+                        <li>{% trans "تشفير جميع البيانات الحساسة (HTTPS، SSL/TLS)" %}</li>
+                        <li>{% trans "تخزين كلمات المرور بشكل مشفر (Hashing)" %}</li>
+                        <li>{% trans "مصادقة JWT للوصول الآمن للـ API" %}</li>
+                        <li>{% trans "حماية ضد هجمات CSRF و XSS و SQL Injection" %}</li>
+                        <li>{% trans "نسخ احتياطية منتظمة للبيانات" %}</li>
+                        <li>{% trans "قيود الوصول الصارمة لفريق العمل" %}</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "7. حقوقك" %}</h2>
+                    <p>{% trans "لديك الحق في:" %}</p>
+                    <ul>
+                        <li>{% trans "الوصول إلى بياناتك الشخصية" %}</li>
+                        <li>{% trans "تصحيح البيانات غير الدقيقة" %}</li>
+                        <li>{% trans "حذف حسابك وبياناتك" %}</li>
+                        <li>{% trans "تصدير بياناتك" %}</li>
+                        <li>{% trans "إلغاء الاشتراك من الرسائل التسويقية" %}</li>
+                        <li>{% trans "الاعتراض على معالجة بياناتك" %}</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "8. ملفات تعريف الارتباط (Cookies)" %}</h2>
+                    <p>
+                        {% trans "نستخدم ملفات تعريف الارتباط لتحسين تجربتك وتذكر تفضيلاتك والحفاظ على جلستك. يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "9. الاحتفاظ بالبيانات" %}</h2>
+                    <p>
+                        {% trans "نحتفظ ببياناتك طالما كان حسابك نشطاً أو حسب الحاجة لتوفير خدماتنا. عند حذف حسابك، سيتم حذف بياناتك الشخصية خلال 30 يوماً، باستثناء ما يتطلب الاحتفاظ به قانونياً." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "10. خصوصية الأطفال" %}</h2>
+                    <p>
+                        {% trans "خدماتنا غير موجهة للأطفال دون سن 18 عاماً. نحن لا نجمع معلومات شخصية من الأطفال عن عمد. إذا علمت أننا جمعنا بيانات من طفل، يرجى الاتصال بنا فوراً." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "11. التغييرات على السياسة" %}</h2>
+                    <p>
+                        {% trans "قد نقوم بتحديث سياسة الخصوصية من وقت لآخر. سنقوم بإخطارك بأي تغييرات جوهرية عبر البريد الإلكتروني أو إشعار على المنصة. استمرار استخدامك للخدمة بعد التغييرات يعني قبولك للسياسة المحدثة." %}
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>{% trans "12. اتصل بنا" %}</h2>
+                    <div class="highlight-box">
+                        <p style="margin-bottom: 10px;">
+                            <strong>{% trans "إذا كان لديك أي أسئلة حول سياسة الخصوصية، يرجى الاتصال بنا:" %}</strong>
+                        </p>
+                        <p style="margin-bottom: 5px;">
+                            <i class="fas fa-envelope ms-2"></i>
+                            {% trans "البريد الإلكتروني:" %} support@sign-sa.net
+                        </p>
+                        <p style="margin-bottom: 5px;">
+                            <i class="fas fa-globe ms-2"></i>
+                            {% trans "الموقع:" %} https://sign-sa.net
+                        </p>
+                        <p style="margin: 0;">
+                            <i class="fas fa-map-marker-alt ms-2"></i>
+                            {% trans "المملكة العربية السعودية" %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/" class="back-link">
+                        <i class="fas fa-arrow-right ms-2"></i>
+                        {% trans "العودة للرئيسية" %}
+                    </a>
+                </div>
+            </div>
+
+            <div class="policy-footer">
+                <p class="mb-0">
+                    © 2025 Sign SA. {% trans "جميع الحقوق محفوظة" %}.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

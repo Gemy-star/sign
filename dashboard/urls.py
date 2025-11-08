@@ -12,4 +12,6 @@ urlpatterns = [
     path('users/', views.users_list, name='users'),
     path('scopes/', views.scopes_list, name='scopes'),
     path('api/analytics/', views.analytics_api, name='analytics_api'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('terms-conditions/', views.terms_conditions, name='terms_conditions'),
 ]

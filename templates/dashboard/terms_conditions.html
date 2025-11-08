@@ -1,0 +1,501 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "الشروط والأحكام" %} - Sign SA</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+    <!-- Bootstrap 5 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6.4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- IBM Plex Sans Arabic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .terms-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .terms-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .terms-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .terms-header img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .terms-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .terms-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .terms-body {
+            padding: 40px;
+        }
+
+        .terms-section {
+            margin-bottom: 30px;
+        }
+
+        .terms-section h2 {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .terms-section h3 {
+            color: #764ba2;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .terms-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .terms-section ul, .terms-section ol {
+            list-style: none;
+            padding-right: 0;
+        }
+
+        .terms-section ul li, .terms-section ol li {
+            padding: 10px 0;
+            padding-right: 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .terms-section ul li:before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 0;
+            color: #667eea;
+        }
+
+        .terms-section ol {
+            counter-reset: item;
+        }
+
+        .terms-section ol li:before {
+            content: counter(item) ".";
+            counter-increment: item;
+            position: absolute;
+            right: 0;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border-right: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #333;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-right: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #856404;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .terms-footer {
+            padding: 20px 40px;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .package-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .package-table th,
+        .package-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .package-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .package-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .terms-body {
+                padding: 30px 20px;
+            }
+
+            .terms-header h1 {
+                font-size: 26px;
+            }
+
+            .terms-section h2 {
+                font-size: 20px;
+            }
+
+            .package-table {
+                font-size: 14px;
+            }
+
+            .package-table th,
+            .package-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terms-container">
+        <div class="terms-card">
+            <div class="terms-header">
+                <img src="{% static 'images/logo-dark.png' %}" alt="Sign SA Logo" onerror="this.style.display='none'">
+                <h1>{% trans "الشروط والأحكام" %}</h1>
+                <p>{% trans "آخر تحديث: 8 نوفمبر 2025" %}</p>
+            </div>
+
+            <div class="terms-body">
+                <div class="warning-box">
+                    <p>
+                        <i class="fas fa-exclamation-triangle ms-2"></i>
+                        <strong>{% trans "يرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام منصتنا." %}</strong>
+                        {% trans "باستخدامك لخدمة Sign SA، فإنك توافق على الالتزام بهذه الشروط." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "1. قبول الشروط" %}</h2>
+                    <p>
+                        {% trans "بالوصول إلى منصة Sign SA أو استخدامها، فإنك توافق على الالتزام بهذه الشروط والأحكام وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على أي جزء من هذه الشروط، فلا يجوز لك استخدام خدماتنا." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "2. وصف الخدمة" %}</h2>
+                    <p>
+                        {% trans "Sign SA هي منصة تطوير شخصي قائمة على الاشتراك توفر:" %}
+                    </p>
+                    <ul>
+                        <li>{% trans "رسائل تحفيزية يومية مخصصة مدعومة بالذكاء الاصطناعي" %}</li>
+                        <li>{% trans "أدوات لتحديد وتتبع الأهداف الشخصية" %}</li>
+                        <li>{% trans "محتوى موجه عبر 8 مجالات حياتية للتطوير الشخصي" %}</li>
+                        <li>{% trans "تحليلات وإحصائيات التقدم الشخصي" %}</li>
+                        <li>{% trans "باقات اشتراك متعددة المستويات" %}</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "3. المجالات الحياتية الثمانية" %}</h2>
+                    <p>{% trans "نوفر محتوى مخصص في المجالات التالية:" %}</p>
+                    <ol>
+                        <li>{% trans "النمو العقلي والعاطفي" %}</li>
+                        <li>{% trans "الصحة البدنية والعافية" %}</li>
+                        <li>{% trans "التطوير المهني والوظيفي" %}</li>
+                        <li>{% trans "النمو المالي" %}</li>
+                        <li>{% trans "العلاقات والحياة الاجتماعية" %}</li>
+                        <li>{% trans "الروحانية والإشباع الداخلي" %}</li>
+                        <li>{% trans "الإبداع والتعلم" %}</li>
+                        <li>{% trans "نمط الحياة والبيئة" %}</li>
+                    </ol>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "4. الحسابات والتسجيل" %}</h2>
+                    <h3>{% trans "4.1 إنشاء الحساب" %}</h3>
+                    <ul>
+                        <li>{% trans "يجب أن يكون عمرك 18 عاماً أو أكثر لإنشاء حساب" %}</li>
+                        <li>{% trans "يجب تقديم معلومات دقيقة وكاملة عند التسجيل" %}</li>
+                        <li>{% trans "أنت مسؤول عن الحفاظ على سرية بيانات حسابك" %}</li>
+                        <li>{% trans "يجب إخطارنا فوراً بأي استخدام غير مصرح به لحسابك" %}</li>
+                    </ul>
+
+                    <h3>{% trans "4.2 أمان الحساب" %}</h3>
+                    <p>
+                        {% trans "أنت مسؤول عن جميع الأنشطة التي تحدث تحت حسابك. نستخدم تشفير قوي (JWT Authentication) وتقنيات أمان حديثة لحماية بياناتك." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "5. باقات الاشتراك والأسعار" %}</h2>
+                    <p>{% trans "نقدم باقات اشتراك متعددة المستويات:" %}</p>
+
+                    <table class="package-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "الباقة" %}</th>
+                                <th>{% trans "المميزات" %}</th>
+                                <th>{% trans "الحد اليومي للرسائل" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>{% trans "الباقة الأساسية" %}</strong></td>
+                                <td>{% trans "رسالة يومية واحدة، مجال واحد" %}</td>
+                                <td>{% trans "1 رسالة/يوم" %}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans "الباقة المميزة" %}</strong></td>
+                                <td>{% trans "رسائل متعددة، أهداف مخصصة، 3 مجالات" %}</td>
+                                <td>{% trans "5 رسائل/يوم" %}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{% trans "باقة الأعمال" %}</strong></td>
+                                <td>{% trans "رسائل غير محدودة، جميع المجالات، تحليلات متقدمة" %}</td>
+                                <td>{% trans "غير محدود" %}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>{% trans "5.1 الدفع والفوترة" %}</h3>
+                    <ul>
+                        <li>{% trans "جميع المدفوعات تتم بشكل آمن عبر بوابة Tap Payment" %}</li>
+                        <li>{% trans "الأسعار معروضة بالريال السعودي (SAR)" %}</li>
+                        <li>{% trans "الاشتراكات تجدد تلقائياً ما لم يتم إلغاؤها" %}</li>
+                        <li>{% trans "نحتفظ بالحق في تغيير الأسعار مع إشعار مسبق" %}</li>
+                    </ul>
+
+                    <h3>{% trans "5.2 الإلغاء والاسترداد" %}</h3>
+                    <ul>
+                        <li>{% trans "يمكنك إلغاء اشتراكك في أي وقت من لوحة التحكم" %}</li>
+                        <li>{% trans "الإلغاء يسري من نهاية فترة الفوترة الحالية" %}</li>
+                        <li>{% trans "لا نقدم استرداد نسبي للاشتراكات الملغاة" %}</li>
+                        <li>{% trans "يمكن طلب استرداد كامل خلال 7 أيام من الاشتراك الجديد" %}</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "6. استخدام الذكاء الاصطناعي" %}</h2>
+                    <div class="highlight-box">
+                        <p style="margin-bottom: 10px;">
+                            <strong>{% trans "تكامل OpenAI ChatGPT:" %}</strong>
+                        </p>
+                        <p>
+                            {% trans "نستخدم OpenAI API لإنشاء محتوى مخصص. المحتوى المُنشأ بواسطة AI هو لأغراض تحفيزية وتعليمية فقط ولا يشكل نصيحة مهنية طبية أو قانونية أو مالية." %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "7. الأهداف والمحتوى المخصص" %}</h2>
+                    <h3>{% trans "7.1 الأهداف الشخصية" %}</h3>
+                    <ul>
+                        <li>{% trans "المشتركون المميزون يمكنهم تحديد أهداف شخصية مخصصة" %}</li>
+                        <li>{% trans "تتبع التقدم والإحصائيات متاح لجميع الأهداف" %}</li>
+                        <li>{% trans "يمكن تعديل أو حذف الأهداف في أي وقت" %}</li>
+                    </ul>
+
+                    <h3>{% trans "7.2 حدود الاستخدام" %}</h3>
+                    <p>{% trans "تختلف حدود الرسائل اليومية حسب الباقة لضمان جودة الخدمة وإدارة تكاليف API." %}</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "8. الاستخدام المقبول" %}</h2>
+                    <p>{% trans "يُمنع عليك:" %}</p>
+                    <ul>
+                        <li>{% trans "استخدام الخدمة لأي غرض غير قانوني أو غير مصرح به" %}</li>
+                        <li>{% trans "محاولة الوصول غير المصرح به إلى الأنظمة" %}</li>
+                        <li>{% trans "التدخل في عمل الخدمة أو الخوادم" %}</li>
+                        <li>{% trans "نسخ أو توزيع أو تعديل محتوى المنصة دون إذن" %}</li>
+                        <li>{% trans "استخدام البوتات أو أدوات الأتمتة لإساءة استخدام API" %}</li>
+                        <li>{% trans "مشاركة بيانات اعتماد حسابك مع الآخرين" %}</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "9. الملكية الفكرية" %}</h2>
+                    <ul>
+                        <li>{% trans "جميع المحتوى والعلامات التجارية مملوكة لـ Sign SA" %}</li>
+                        <li>{% trans "المحتوى المُنشأ بواسطة AI مرخص لاستخدامك الشخصي فقط" %}</li>
+                        <li>{% trans "لا يجوز نشر أو إعادة توزيع المحتوى تجارياً" %}</li>
+                        <li>{% trans "نحتفظ بجميع الحقوق غير الممنوحة صراحة" %}</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "10. إخلاء المسؤولية" %}</h2>
+                    <div class="warning-box">
+                        <p style="margin-bottom: 10px;">
+                            <strong>{% trans "تنويه مهم:" %}</strong>
+                        </p>
+                        <ul style="margin: 0; padding-right: 20px;">
+                            <li>{% trans "الخدمة متوفرة 'كما هي' دون ضمانات من أي نوع" %}</li>
+                            <li>{% trans "لا نضمن دقة أو اكتمال المحتوى المُنشأ بواسطة AI" %}</li>
+                            <li>{% trans "المحتوى لا يحل محل النصيحة المهنية المتخصصة" %}</li>
+                            <li>{% trans "لسنا مسؤولين عن أي قرارات تتخذها بناءً على المحتوى" %}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "11. تحديد المسؤولية" %}</h2>
+                    <p>
+                        {% trans "لن نكون مسؤولين عن أي أضرار غير مباشرة أو عرضية أو خاصة أو تبعية تنشأ عن استخدام أو عدم القدرة على استخدام خدماتنا، حتى لو تم إخطارنا باحتمال حدوث مثل هذه الأضرار." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "12. إنهاء الخدمة" %}</h2>
+                    <p>{% trans "نحتفظ بالحق في:" %}</p>
+                    <ul>
+                        <li>{% trans "تعليق أو إنهاء حسابك لانتهاك الشروط" %}</li>
+                        <li>{% trans "تعديل أو إيقاف الخدمة في أي وقت" %}</li>
+                        <li>{% trans "رفض الخدمة لأي شخص لأي سبب" %}</li>
+                    </ul>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "13. التحديثات والتعديلات" %}</h2>
+                    <p>
+                        {% trans "نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إخطار المستخدمين بالتغييرات الجوهرية عبر البريد الإلكتروني أو من خلال المنصة. استمرار استخدامك للخدمة بعد التعديلات يعني قبولك للشروط الجديدة." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "14. القانون الحاكم" %}</h2>
+                    <p>
+                        {% trans "تخضع هذه الشروط وتفسر وفقاً لقوانين المملكة العربية السعودية. أي نزاعات سيتم حلها في المحاكم المختصة في المملكة." %}
+                    </p>
+                </div>
+
+                <div class="terms-section">
+                    <h2>{% trans "15. الاتصال بنا" %}</h2>
+                    <div class="highlight-box">
+                        <p style="margin-bottom: 10px;">
+                            <strong>{% trans "للأسئلة حول هذه الشروط والأحكام:" %}</strong>
+                        </p>
+                        <p style="margin-bottom: 5px;">
+                            <i class="fas fa-envelope ms-2"></i>
+                            {% trans "البريد الإلكتروني:" %} support@sign-sa.net
+                        </p>
+                        <p style="margin-bottom: 5px;">
+                            <i class="fas fa-globe ms-2"></i>
+                            {% trans "الموقع:" %} https://sign-sa.net
+                        </p>
+                        <p style="margin: 0;">
+                            <i class="fas fa-map-marker-alt ms-2"></i>
+                            {% trans "المملكة العربية السعودية" %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/" class="back-link">
+                        <i class="fas fa-arrow-right ms-2"></i>
+                        {% trans "العودة للرئيسية" %}
+                    </a>
+                </div>
+            </div>
+
+            <div class="terms-footer">
+                <p class="mb-0">
+                    © 2025 Sign SA. {% trans "جميع الحقوق محفوظة" %}.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
