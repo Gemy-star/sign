@@ -269,10 +269,10 @@
         const ctx = document.getElementById('userActivityChart');
         if (!ctx) return;
 
-        // Sample data - replace with actual data from backend
-        const labels = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-        const newUsers = [5, 8, 12, 6, 15, 10, 7];
-        const activeUsers = [45, 52, 48, 61, 58, 55, 62];
+        // Real data from backend
+        const labels = {{ days_labels|safe }};
+        const newUsers = {{ new_users_per_day|safe }};
+        const activeUsers = {{ active_users_per_day|safe }};
 
         new Chart(ctx, {
             type: 'bar',

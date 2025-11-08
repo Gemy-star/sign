@@ -288,9 +288,9 @@
         const ctx = document.getElementById('categoryChart');
         if (!ctx) return;
 
-        // Sample data - replace with actual data from backend
-        const categories = ['النمو العقلي', 'الصحة البدنية', 'التطوير المهني', 'النمو المالي', 'العلاقات', 'الروحانية', 'الإبداع', 'نمط الحياة'];
-        const counts = [8, 6, 7, 5, 9, 4, 6, 7];
+        // Real data from backend
+        const categories = {{ categories_labels|safe }};
+        const counts = {{ categories_counts|safe }};
 
         new Chart(ctx, {
             type: 'bar',
@@ -349,12 +349,15 @@
         const ctx = document.getElementById('usageChart');
         if (!ctx) return;
 
+        // Real data from backend
+        const usageData = {{ usage_data|safe }};
+
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['مستخدم بكثرة', 'مستخدم', 'نادر الاستخدام'],
                 datasets: [{
-                    data: [35, 45, 20],
+                    data: usageData,
                     backgroundColor: [
                         '#48bb78',
                         '#eb672a',

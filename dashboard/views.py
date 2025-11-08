@@ -300,8 +300,30 @@ def users_list(request):
         total_messages=Count('ai_messages')
     ).order_by('-date_joined')[:50]
 
+    # Chart data - last 7 days
+    today = timezone.now()
+    last_7_days = [today - timedelta(days=i) for i in range(6, -1, -1)]
+
+    new_users_per_day = []
+    active_users_per_day = []
+
+    for day in last_7_days:
+        # New users joined on that day
+        new_count = User.objects.filter(date_joined__date=day.date()).count()
+        new_users_per_day.append(new_count)
+
+        # Active users (users with active subscriptions or messages on that day)
+        active_count = User.objects.filter(
+            Q(subscriptions__status='active', subscriptions__start_date__lte=day) |
+            Q(ai_messages__created_at__date=day.date())
+        ).distinct().count()
+        active_users_per_day.append(active_count)
+
     context = {
         'users': users,
+        'days_labels': [day.strftime('%A') for day in last_7_days],
+        'new_users_per_day': new_users_per_day,
+        'active_users_per_day': active_users_per_day,
     }
 
     return render(request, 'dashboard/users.html', context)
@@ -429,8 +451,31 @@ def scopes_list(request):
         message_count=Count('messages')
     ).order_by('category', 'name')
 
+    # Category distribution data
+    category_data = Scope.objects.values('category').annotate(
+        count=Count('id')
+    ).order_by('category')
+
+    categories_labels = [dict(Scope.SCOPE_CATEGORIES).get(item['category'], item['category']) for item in category_data]
+    categories_counts = [item['count'] for item in category_data]
+
+    # Usage distribution (based on subscription counts)
+    total_scopes = scopes.count()
+    if total_scopes > 0:
+        # High usage: > 10 subscriptions
+        high_usage = scopes.filter(subscription_count__gt=10).count()
+        # Medium usage: 1-10 subscriptions
+        medium_usage = scopes.filter(subscription_count__gte=1, subscription_count__lte=10).count()
+        # Low usage: 0 subscriptions
+        low_usage = scopes.filter(subscription_count=0).count()
+    else:
+        high_usage = medium_usage = low_usage = 0
+
     context = {
         'scopes': scopes,
+        'categories_labels': categories_labels,
+        'categories_counts': categories_counts,
+        'usage_data': [high_usage, medium_usage, low_usage],
     }
 
     return render(request, 'dashboard/scopes.html', context)
