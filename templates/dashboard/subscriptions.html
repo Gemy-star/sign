@@ -19,37 +19,39 @@
     <!-- Filter Buttons -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="btn-group" role="group">
-                <a href="{% url 'dashboard:subscriptions' %}" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">
-                    <i class="fas fa-list"></i> الكل
-                    <span class="badge" style="background: white; color: var(--color-primary); margin-right: 0.5rem;">
-                        {{ status_counts.active|default:0|add:status_counts.expired|default:0|add:status_counts.cancelled|default:0|add:status_counts.pending|default:0|add:status_counts.failed|default:0 }}
-                    </span>
-                </a>
-                <a href="?status=active" class="btn {% if status_filter == 'active' %}btn-primary{% else %}btn-outline{% endif %}">
-                    <i class="fas fa-check-circle"></i> نشط
-                    <span class="badge" style="background: white; color: var(--color-success); margin-right: 0.5rem;">
-                        {{ status_counts.active|default:0 }}
-                    </span>
-                </a>
-                <a href="?status=pending" class="btn {% if status_filter == 'pending' %}btn-primary{% else %}btn-outline{% endif %}">
-                    <i class="fas fa-hourglass-half"></i> قيد الانتظار
-                    <span class="badge" style="background: white; color: var(--color-info); margin-right: 0.5rem;">
-                        {{ status_counts.pending|default:0 }}
-                    </span>
-                </a>
-                <a href="?status=expired" class="btn {% if status_filter == 'expired' %}btn-primary{% else %}btn-outline{% endif %}">
-                    <i class="fas fa-clock"></i> منتهي
-                    <span class="badge" style="background: white; color: var(--color-warning); margin-right: 0.5rem;">
-                        {{ status_counts.expired|default:0 }}
-                    </span>
-                </a>
-                <a href="?status=cancelled" class="btn {% if status_filter == 'cancelled' %}btn-primary{% else %}btn-outline{% endif %}">
-                    <i class="fas fa-times-circle"></i> ملغي
-                    <span class="badge" style="background: white; color: var(--color-danger); margin-right: 0.5rem;">
-                        {{ status_counts.cancelled|default:0 }}
-                    </span>
-                </a>
+            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <div class="btn-group" role="group" style="white-space: nowrap;">
+                    <a href="{% url 'dashboard:subscriptions' %}" class="btn {% if not status_filter %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-list"></i> الكل
+                        <span class="badge" style="background: white; color: var(--color-primary); margin-right: 0.5rem;">
+                            {{ status_counts.active|default:0|add:status_counts.expired|default:0|add:status_counts.cancelled|default:0|add:status_counts.pending|default:0|add:status_counts.failed|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?status=active" class="btn {% if status_filter == 'active' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-check-circle"></i> نشط
+                        <span class="badge" style="background: white; color: var(--color-success); margin-right: 0.5rem;">
+                            {{ status_counts.active|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?status=pending" class="btn {% if status_filter == 'pending' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-hourglass-half"></i> قيد الانتظار
+                        <span class="badge" style="background: white; color: var(--color-info); margin-right: 0.5rem;">
+                            {{ status_counts.pending|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?status=expired" class="btn {% if status_filter == 'expired' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-clock"></i> منتهي
+                        <span class="badge" style="background: white; color: var(--color-warning); margin-right: 0.5rem;">
+                            {{ status_counts.expired|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?status=cancelled" class="btn {% if status_filter == 'cancelled' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-times-circle"></i> ملغي
+                        <span class="badge" style="background: white; color: var(--color-danger); margin-right: 0.5rem;">
+                            {{ status_counts.cancelled|default:0 }}
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
