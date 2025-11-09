@@ -25,8 +25,8 @@
     <!-- Packages Grid -->
     <!-- Desktop Grid View -->
     <div class="row g-3 d-none d-md-flex">
-    {% for package in packages %}
-    <div class="col-12 col-sm-6 col-lg-4 mb-4">
+        {% for package in packages %}
+        <div class="col-12 col-sm-6 col-lg-4 mb-4">
         <div class="card h-100 scale-in" style="animation-delay: {{ forloop.counter0|add:1|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s; border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); overflow: hidden; transition: all var(--transition-base);">
             {% if package.is_featured %}
             <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; text-align: center; padding: 0.5rem; font-weight: 600;">
@@ -179,18 +179,18 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
 
-        <div class="swiper-pagination mt-3"></div>
-    </div>
-    {% else %}
-    <div class="alert alert-info text-center">
-        <i class="fas fa-info-circle fa-2x mb-3"></i>
-        <h4>لا توجد باقات</h4>
-            <p>لم يتم إنشاء أي باقات بعد</p>
+            <div class="swiper-pagination mt-3"></div>
         </div>
-        {% endif %}
+            {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <h4>لا توجد باقات</h4>
+                <p>لم يتم إنشاء أي باقات بعد</p>
+            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -199,48 +199,48 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="chart-card fade-in">
-    <div class="chart-header">
-        <h3 class="chart-title">
-            <i class="fas fa-chart-bar text-primary"></i>
-            إحصائيات الباقات
-        </h3>
-    </div>
-    <div style="padding: 1.5rem;">
-        <div class="row text-center">
-            <div class="col-md-3 mb-3">
-                <div class="stat-icon primary mx-auto mb-3">
-                    <i class="fas fa-box"></i>
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-bar text-primary"></i>
+                        إحصائيات الباقات
+                    </h3>
                 </div>
-                <h3 class="fw-bold" style="color: var(--color-primary);">{{ packages.count }}</h3>
-                <p class="text-muted">إجمالي الباقات</p>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stat-icon success mx-auto mb-3">
-                    <i class="fas fa-check"></i>
+                <div style="padding: 1.5rem;">
+                    <div class="row text-center">
+                        <div class="col-12 col-sm-6 col-md-3 mb-3">
+                            <div class="stat-icon primary mx-auto mb-3">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <h3 class="fw-bold" style="color: var(--color-primary);">{{ packages.count }}</h3>
+                            <p class="text-muted">إجمالي الباقات</p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-3">
+                            <div class="stat-icon success mx-auto mb-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h3 class="fw-bold" style="color: var(--color-success);">{{ packages|length }}</h3>
+                            <p class="text-muted">باقات نشطة</p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-3">
+                            <div class="stat-icon secondary mx-auto mb-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="fw-bold" style="color: var(--color-secondary);">
+                                {% widthratio packages|length 1 100 %}
+                            </h3>
+                            <p class="text-muted">معدل الاشتراكات</p>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-3 mb-3">
+                            <div class="stat-icon warning mx-auto mb-3">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <h3 class="fw-bold" style="color: var(--color-warning);">
+                                ${% for package in packages %}{% if package.total_revenue %}{{ package.total_revenue|add:0 }}{% endif %}{% endfor %}
+                            </h3>
+                            <p class="text-muted">إجمالي الإيرادات</p>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="fw-bold" style="color: var(--color-success);">{{ packages|length }}</h3>
-                <p class="text-muted">باقات نشطة</p>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stat-icon secondary mx-auto mb-3">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3 class="fw-bold" style="color: var(--color-secondary);">
-                    {% widthratio packages|length 1 100 %}
-                </h3>
-                <p class="text-muted">معدل الاشتراكات</p>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="stat-icon warning mx-auto mb-3">
-                    <i class="fas fa-dollar-sign"></i>
-                </div>
-                <h3 class="fw-bold" style="color: var(--color-warning);">
-                    ${% for package in packages %}{% if package.total_revenue %}{{ package.total_revenue|add:0 }}{% endif %}{% endfor %}
-                </h3>
-                <p class="text-muted">إجمالي الإيرادات</p>
-            </div>
-            </div>
-        </div>
             </div>
         </div>
     </div>

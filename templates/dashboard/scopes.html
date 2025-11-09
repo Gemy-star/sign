@@ -24,53 +24,58 @@
 
     <!-- Statistics Cards -->
     <div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.1s;">
-        <div class="stat-header">
-            <div class="stat-icon primary">
-                <i class="fas fa-layer-group"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+                <div class="stat-header">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ scopes.count }}</div>
+                <div class="stat-label">إجمالي المجالات</div>
             </div>
         </div>
-        <div class="stat-value">{{ scopes.count }}</div>
-        <div class="stat-label">إجمالي المجالات</div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.2s;">
-        <div class="stat-header">
-            <div class="stat-icon success">
-                <i class="fas fa-check-circle"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {{ scopes|length }}
+                </div>
+                <div class="stat-label">مجالات نشطة</div>
             </div>
         </div>
-        <div class="stat-value">
-            {{ scopes|length }}
-        </div>
-        <div class="stat-label">مجالات نشطة</div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.3s;">
-        <div class="stat-header">
-            <div class="stat-icon secondary">
-                <i class="fas fa-users"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+                <div class="stat-header">
+                    <div class="stat-icon secondary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {% widthratio scopes.count 1 100 %}
+                </div>
+                <div class="stat-label">إجمالي الاشتراكات</div>
             </div>
         </div>
-        <div class="stat-value">
-            {% widthratio scopes.count 1 100 %}
-        </div>
-        <div class="stat-label">إجمالي الاشتراكات</div>
-    </div>
 
-    <div class="stat-card fade-in" style="animation-delay: 0.4s;">
-        <div class="stat-header">
-            <div class="stat-icon info">
-                <i class="fas fa-comment-dots"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.4s;">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {% widthratio scopes.count 1 500 %}
+                </div>
+                <div class="stat-label">الرسائل المرسلة</div>
             </div>
-        </div>
-        <div class="stat-value">
-            {% widthratio scopes.count 1 500 %}
-        </div>
-            <div class="stat-label">الرسائل المرسلة</div>
         </div>
     </div>
 
@@ -80,20 +85,20 @@
     {% for category in scopes_by_category %}
     <div class="row mb-5">
         <div class="col-12">
-    <div class="d-flex align-items-center mb-4">
-        <h2 class="h4 fw-bold mb-0" style="color: var(--color-secondary);">
-            <i class="fas fa-folder-open"></i>
-            {{ category.grouper }}
-        </h2>
-        <div class="me-auto"></div>
-        <span class="badge badge-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
-            {{ category.list|length }} مجال
-        </span>
-    </div>
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="h4 fw-bold mb-0" style="color: var(--color-secondary);">
+                    <i class="fas fa-folder-open"></i>
+                    {{ category.grouper }}
+                </h2>
+                <div class="me-auto"></div>
+                <span class="badge badge-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                    {{ category.list|length }} مجال
+                </span>
+            </div>
 
-    <div class="row g-3">
-        {% for scope in category.list %}
-        <div class="col-12 col-sm-6 col-lg-4 mb-4">
+            <div class="row g-3">
+                {% for scope in category.list %}
+                <div class="col-12 col-sm-6 col-lg-4 mb-4">
             <div class="card h-100 scale-in" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); transition: all var(--transition-base); animation-delay: {{ forloop.counter0|divisibleby:10|yesno:'0.1,0.2,0.3,0.4' }}s;">
                 <div class="card-body p-4">
                     <!-- Icon & Title -->
@@ -164,11 +169,11 @@
                 </div>
             </div>
         </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
-        {% empty %}
+    {% empty %}
     <div class="row">
         <div class="col-12">
             <div class="alert alert-info text-center py-5">
@@ -186,32 +191,32 @@
     <!-- Category Distribution Chart -->
     {% if scopes %}
     <div class="row g-3 mt-5">
-    <div class="col-12 col-lg-8">
-        <div class="chart-card fade-in">
-            <div class="chart-header">
-                <h3 class="chart-title">
-                    <i class="fas fa-chart-bar text-primary"></i>
-                    توزيع المجالات حسب الفئة
-                </h3>
-            </div>
-            <div class="chart-container">
-                <canvas id="categoryChart"></canvas>
+        <div class="col-12 col-lg-8">
+            <div class="chart-card fade-in">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-bar text-primary"></i>
+                        توزيع المجالات حسب الفئة
+                    </h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-12 col-lg-4">
-        <div class="chart-card fade-in" style="animation-delay: 0.2s;">
-            <div class="chart-header">
-                <h3 class="chart-title">
-                    <i class="fas fa-chart-pie text-secondary"></i>
-                    نسبة الاستخدام
-                </h3>
+        <div class="col-12 col-lg-4">
+            <div class="chart-card fade-in" style="animation-delay: 0.2s;">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-pie text-secondary"></i>
+                        نسبة الاستخدام
+                    </h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
             </div>
-            <div class="chart-container">
-                <canvas id="usageChart"></canvas>
-            </div>
-        </div>
         </div>
     </div>
 
@@ -219,13 +224,13 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="table-card fade-in">
-    <div class="table-header">
-        <h3 class="table-title">
-            <i class="fas fa-trophy"></i>
-            المجالات الأكثر شعبية
-        </h3>
-    </div>
-    <div class="table-responsive table-responsive-wrapper">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-trophy"></i>
+                        المجالات الأكثر شعبية
+                    </h3>
+                </div>
+                <div class="table-responsive table-responsive-wrapper">
         <table class="data-table">
             <thead>
                 <tr>
@@ -270,10 +275,10 @@
                         </div>
                     </td>
                 </tr>
-                {% endfor %}
-            </tbody>
+                    {% endfor %}
+                </tbody>
             </table>
-        </div>
+                </div>
             </div>
         </div>
     </div>

@@ -4,15 +4,20 @@
 {% block title %}لوحة التحكم الرئيسية{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title fade-in">
-        <i class="fas fa-chart-line"></i> لوحة التحكم
-    </h1>
-    <p class="page-subtitle">نظرة عامة على إحصائيات النظام</p>
-</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-chart-line"></i> لوحة التحكم
+                </h1>
+                <p class="page-subtitle">نظرة عامة على إحصائيات النظام</p>
+            </div>
+        </div>
+    </div>
 
-<!-- Statistics Cards -->
-<div class="row g-3 mb-4">
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="stat-card fade-in" style="animation-delay: 0.1s;">
             <div class="stat-header">
@@ -74,12 +79,12 @@
                 <i class="fas fa-arrow-up"></i>
                 <span>+15%</span>
             </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Charts Row -->
-<div class="row g-3">
+    <!-- Charts Row -->
+    <div class="row g-3">
     <div class="col-12 col-lg-8 mb-4">
         <div class="chart-card scale-in" style="animation-delay: 0.5s;">
             <div class="chart-header">
@@ -109,12 +114,12 @@
             <div class="chart-container">
                 <canvas id="packagesChart"></canvas>
             </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Recent Activity Row -->
-<div class="row g-3">
+    <!-- Recent Activity Row -->
+    <div class="row g-3">
     <div class="col-12 col-lg-6 mb-4">
         <div class="table-card slide-in-right" style="animation-delay: 0.7s;">
             <div class="table-header">
@@ -243,6 +248,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
             </div>
         </div>
     </div>
