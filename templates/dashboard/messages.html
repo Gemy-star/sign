@@ -18,83 +18,89 @@
 
     <!-- Statistics Cards -->
     <div class="row g-3 mb-4">
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.1s;">
-        <div class="stat-header">
-            <div class="stat-icon primary">
-                <i class="fas fa-comment-dots"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+                <div class="stat-header">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ messages.count }}</div>
+                <div class="stat-label">إجمالي الرسائل</div>
             </div>
         </div>
-        <div class="stat-value">{{ messages.count }}</div>
-        <div class="stat-label">إجمالي الرسائل</div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.2s;">
-        <div class="stat-header">
-            <div class="stat-icon info">
-                <i class="fas fa-sun"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ type_counts.daily|default:0 }}</div>
+                <div class="stat-label">رسائل يومية</div>
             </div>
         </div>
-        <div class="stat-value">{{ type_counts.daily|default:0 }}</div>
-        <div class="stat-label">رسائل يومية</div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.3s;">
-        <div class="stat-header">
-            <div class="stat-icon success">
-                <i class="fas fa-bullseye"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ type_counts.goal_specific|default:0 }}</div>
+                <div class="stat-label">رسائل الأهداف</div>
             </div>
         </div>
-        <div class="stat-value">{{ type_counts.goal_specific|default:0 }}</div>
-        <div class="stat-label">رسائل الأهداف</div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.4s;">
-        <div class="stat-header">
-            <div class="stat-icon warning">
-                <i class="fas fa-star"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.4s;">
+                <div class="stat-header">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ avg_rating|floatformat:1 }}</div>
+                <div class="stat-label">متوسط التقييم</div>
             </div>
-        </div>
-        <div class="stat-value">{{ avg_rating|floatformat:1 }}</div>
-            <div class="stat-label">متوسط التقييم</div>
         </div>
     </div>
 
     <!-- Filter Buttons -->
     <div class="row mb-4">
         <div class="col-12">
-    <div class="btn-group" role="group">
-        <a href="{% url 'dashboard:messages' %}" class="btn {% if not message_type %}btn-primary{% else %}btn-outline{% endif %}">
-            <i class="fas fa-list"></i> الكل
-        </a>
-        <a href="?type=daily" class="btn {% if message_type == 'daily' %}btn-primary{% else %}btn-outline{% endif %}">
-            <i class="fas fa-sun"></i> يومي
-            <span class="badge" style="background: white; color: var(--color-info); margin-right: 0.5rem;">
-                {{ type_counts.daily|default:0 }}
-            </span>
-        </a>
-        <a href="?type=goal_specific" class="btn {% if message_type == 'goal_specific' %}btn-primary{% else %}btn-outline{% endif %}">
-            <i class="fas fa-bullseye"></i> أهداف
-            <span class="badge" style="background: white; color: var(--color-success); margin-right: 0.5rem;">
-                {{ type_counts.goal_specific|default:0 }}
-            </span>
-        </a>
-        <a href="?type=scope_based" class="btn {% if message_type == 'scope_based' %}btn-primary{% else %}btn-outline{% endif %}">
-            <i class="fas fa-layer-group"></i> مجال
-            <span class="badge" style="background: white; color: var(--color-warning); margin-right: 0.5rem;">
-                {{ type_counts.scope_based|default:0 }}
-            </span>
-        </a>
-        <a href="?type=custom" class="btn {% if message_type == 'custom' %}btn-primary{% else %}btn-outline{% endif %}">
-            <i class="fas fa-magic"></i> مخصص
-            <span class="badge" style="background: white; color: var(--color-secondary); margin-right: 0.5rem;">
-                {{ type_counts.custom|default:0 }}
-            </span>
-            </a>
-        </div>
+            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <div class="btn-group" role="group" style="white-space: nowrap;">
+                    <a href="{% url 'dashboard:messages' %}" class="btn {% if not message_type %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-list"></i> الكل
+                    </a>
+                    <a href="?type=daily" class="btn {% if message_type == 'daily' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-sun"></i> يومي
+                        <span class="badge" style="background: white; color: var(--color-info); margin-right: 0.5rem;">
+                            {{ type_counts.daily|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?type=goal_specific" class="btn {% if message_type == 'goal_specific' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-bullseye"></i> أهداف
+                        <span class="badge" style="background: white; color: var(--color-success); margin-right: 0.5rem;">
+                            {{ type_counts.goal_specific|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?type=scope_based" class="btn {% if message_type == 'scope_based' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-layer-group"></i> مجال
+                        <span class="badge" style="background: white; color: var(--color-warning); margin-right: 0.5rem;">
+                            {{ type_counts.scope_based|default:0 }}
+                        </span>
+                    </a>
+                    <a href="?type=custom" class="btn {% if message_type == 'custom' %}btn-primary{% else %}btn-outline{% endif %}">
+                        <i class="fas fa-magic"></i> مخصص
+                        <span class="badge" style="background: white; color: var(--color-secondary); margin-right: 0.5rem;">
+                            {{ type_counts.custom|default:0 }}
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -102,23 +108,23 @@
     <div class="row">
         <div class="col-12">
             <div class="table-card fade-in">
-    <div class="table-header">
-        <h3 class="table-title">
-            <i class="fas fa-table"></i>
-            {% if message_type %}
-                الرسائل - {{ message_type }}
-            {% else %}
-                جميع الرسائل
-            {% endif %}
-        </h3>
-        <div class="d-flex gap-2">
-            <input type="text" id="searchInput" class="form-control" placeholder="بحث..." style="max-width: 300px;">
-        </div>
-    </div>
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-table"></i>
+                        {% if message_type %}
+                            الرسائل - {{ message_type }}
+                        {% else %}
+                            جميع الرسائل
+                        {% endif %}
+                    </h3>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="searchInput" class="form-control" placeholder="بحث..." style="max-width: 300px;">
+                    </div>
+                </div>
 
-    <div class="row p-4" id="messagesList">
-        {% for message in messages %}
-        <div class="col-lg-6 mb-4 message-item">
+                <div class="row p-4" id="messagesList">
+                    {% for message in messages %}
+                    <div class="col-12 col-lg-6 mb-4 message-item">
             <div class="card h-100 scale-in" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--border-radius-lg); transition: all var(--transition-base); animation-delay: {{ forloop.counter0|divisibleby:10|yesno:'0.1,0.2,0.3,0.4,0.5' }}s;">
                 <div class="card-body p-4">
                     <!-- Header -->
@@ -231,18 +237,19 @@
                         <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">{{ message.prompt_used }}</pre>
                     </div>
                 </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info text-center py-5">
-                <i class="fas fa-inbox fa-3x mb-3"></i>
-                <h4>لا توجد رسائل</h4>
-                <p class="text-muted">لم يتم العثور على أي رسائل</p>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <h4>لا توجد رسائل</h4>
+                    <p class="text-muted">لم يتم العثور على أي رسائل</p>
+                </div>
             </div>
-        </div>
             {% endfor %}
-        </div>
+                </div>
             </div>
         </div>
     </div>
