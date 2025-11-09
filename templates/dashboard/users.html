@@ -19,69 +19,73 @@
     <!-- Statistics Cards -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.1s;">
-        <div class="stat-header">
-            <div class="stat-icon primary">
-                <i class="fas fa-users"></i>
+            <div class="stat-card fade-in" style="animation-delay: 0.1s;">
+                <div class="stat-header">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ users.count }}</div>
+                <div class="stat-label">إجمالي المستخدمين</div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12%</span>
+                </div>
             </div>
         </div>
-        <div class="stat-value">{{ users.count }}</div>
-        <div class="stat-label">إجمالي المستخدمين</div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>+12%</span>
-        </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.2s;">
-        <div class="stat-header">
-            <div class="stat-icon success">
-                <i class="fas fa-user-check"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.2s;">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {% widthratio users.count 1 1 %}
+                </div>
+                <div class="stat-label">مستخدمون نشطون</div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8%</span>
+                </div>
             </div>
         </div>
-        <div class="stat-value">
-            {% widthratio users.count 1 1 %}
-        </div>
-        <div class="stat-label">مستخدمون نشطون</div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>+8%</span>
-        </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.3s;">
-        <div class="stat-header">
-            <div class="stat-icon secondary">
-                <i class="fas fa-crown"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.3s;">
+                <div class="stat-header">
+                    <div class="stat-icon secondary">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {{ users|length }}
+                </div>
+                <div class="stat-label">مشتركون</div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+24%</span>
+                </div>
             </div>
         </div>
-        <div class="stat-value">
-            {{ users|length }}
-        </div>
-        <div class="stat-label">مشتركون</div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>+24%</span>
-        </div>
-    </div>
 
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="stat-card fade-in" style="animation-delay: 0.4s;">
-        <div class="stat-header">
-            <div class="stat-icon info">
-                <i class="fas fa-user-plus"></i>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.4s;">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {{ users|slice:":7"|length }}
+                </div>
+                <div class="stat-label">مستخدمون جدد (7 أيام)</div>
+                <div class="stat-trend up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+15%</span>
+                </div>
             </div>
-        </div>
-        <div class="stat-value">
-            {{ users|slice:":7"|length }}
-        </div>
-        <div class="stat-label">مستخدمون جدد (7 أيام)</div>
-        <div class="stat-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>+15%</span>
-        </div>
         </div>
     </div>
 
@@ -89,19 +93,19 @@
     <div class="row">
         <div class="col-12">
             <div class="table-card fade-in">
-    <div class="table-header">
-        <h3 class="table-title">
-            <i class="fas fa-table"></i>
-            قائمة المستخدمين
-        </h3>
-        <div class="d-flex gap-2">
-            <input type="text" id="searchInput" class="form-control" placeholder="بحث عن مستخدم..." style="max-width: 300px;">
-            <a href="{% url 'dashboard:user_create' %}" class="btn btn-primary">
-                <i class="fas fa-user-plus"></i> إضافة مستخدم
-            </a>
-        </div>
-    </div>
-    <div class="table-responsive table-responsive-wrapper">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-table"></i>
+                        قائمة المستخدمين
+                    </h3>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="searchInput" class="form-control" placeholder="بحث عن مستخدم..." style="max-width: 300px;">
+                        <a href="{% url 'dashboard:user_create' %}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> إضافة مستخدم
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive table-responsive-wrapper">
         <table class="data-table" id="usersTable">
             <thead>
                 <tr>
@@ -207,8 +211,8 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            </table>
-        </div>
+        </table>
+                </div>
             </div>
         </div>
     </div>
@@ -217,12 +221,12 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="chart-card fade-in">
-    <div class="chart-header">
-        <h3 class="chart-title">
-            <i class="fas fa-chart-line text-primary"></i>
-            نشاط المستخدمين
-        </h3>
-    </div>
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-line text-primary"></i>
+                        نشاط المستخدمين
+                    </h3>
+                </div>
                 <div class="chart-container">
                     <canvas id="userActivityChart"></canvas>
                 </div>
