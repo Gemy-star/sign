@@ -1,4 +1,4 @@
-logifrom django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand
 from django.db import transaction
 from api.models import CustomUser
 
