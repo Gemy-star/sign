@@ -83,6 +83,128 @@
         </div>
     </div>
 
+    <!-- User Roles Statistics -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h3 class="section-title">
+                <i class="fas fa-user-tag"></i>
+                إحصائيات أدوار المستخدمين
+            </h3>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card fade-in" style="animation-delay: 0.5s;">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="normalUsers">{{ normal_users }}</div>
+                <div class="stat-label">المستخدمون العاديون</div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: {{ normal_users_percent }}%"></div>
+                    </div>
+                    <small>{{ normal_users_percent|floatformat:1 }}%</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card fade-in" style="animation-delay: 0.6s;">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="subscribers">{{ subscribers }}</div>
+                <div class="stat-label">المشتركون</div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: {{ subscribers_percent }}%"></div>
+                    </div>
+                    <small>{{ subscribers_percent|floatformat:1 }}%</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat-card fade-in" style="animation-delay: 0.7s;">
+                <div class="stat-header">
+                    <div class="stat-icon danger">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="admins">{{ admins }}</div>
+                <div class="stat-label">المسؤولون</div>
+                <div class="stat-progress">
+                    <div class="progress">
+                        <div class="progress-bar bg-danger" style="width: {{ admins_percent }}%"></div>
+                    </div>
+                    <small>{{ admins_percent|floatformat:1 }}%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trial Statistics -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h3 class="section-title">
+                <i class="fas fa-clock"></i>
+                إحصائيات التجارب المجانية
+            </h3>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.8s;">
+                <div class="stat-header">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="activeTrials">{{ active_trials }}</div>
+                <div class="stat-label">التجارب النشطة</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 0.9s;">
+                <div class="stat-header">
+                    <div class="stat-icon secondary">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="usedTrials">{{ used_trials }}</div>
+                <div class="stat-label">التجارب المستخدمة</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 1.0s;">
+                <div class="stat-header">
+                    <div class="stat-icon info">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="expiringSoon">{{ expiring_soon }}</div>
+                <div class="stat-label">تنتهي قريباً (3 أيام)</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="stat-card fade-in" style="animation-delay: 1.1s;">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="trialToSubConversion">{{ trial_to_sub_conversion }}%</div>
+                <div class="stat-label">معدل التحويل إلى اشتراك</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Charts Row -->
     <div class="row g-3">
     <div class="col-12 col-lg-8 mb-4">

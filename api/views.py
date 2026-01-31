@@ -2,6 +2,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.db.models import Q, Count
 from datetime import datetime, timedelta
@@ -15,10 +16,175 @@ from .serializers import (
     SubscriptionListSerializer, SubscriptionDetailSerializer,
     SubscriptionCreateSerializer, UserGoalSerializer,
     AIMessageSerializer, AIMessageCreateSerializer,
-    PaymentTransactionSerializer
+    PaymentTransactionSerializer, UserRegistrationSerializer,
+    UserLoginSerializer, UserSerializer, TrialManagementSerializer,
+    UserListSerializer
 )
+from .jwt_utils import get_user_token
 from .services import OpenAIService, TapPaymentService
 from .permissions import IsOwnerOrReadOnly, HasActiveSubscription
+from .scope_permissions import (
+    require_scope, require_permission, require_feature,
+    AdminScopePermission, SubscriberScopePermission, TrialScopePermission,
+    CustomGoalsPermission, check_subscription_or_trial
+)
+from .scope_utils import ScopeManager
+
+
+class UserRegistrationView(APIView):
+    """
+    API endpoint for user registration
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """Register a new user"""
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                'user': UserSerializer(user).data,
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginView(APIView):
+    """
+    API endpoint for user login
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        """Login user and return JWT token with scopes"""
+        serializer = UserLoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+
+            # Generate custom token with scopes and permissions
+            token_data = get_user_token(user)
+
+            return Response({
+                'message': 'Login successful',
+                'token': token_data,
+                'user_info': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'role': user.role,
+                    'full_name': user.full_name,
+                    'has_active_trial': user.has_active_trial,
+                    'trial_remaining_days': user.trial_remaining_days,
+                    'scopes': user.get_user_scopes(),
+                    'permissions': user.get_user_permissions(),
+                }
+            }, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(APIView):
+    """
+    API endpoint for getting and updating user profile
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Get current user profile"""
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
+    def patch(self, request):
+        """Update current user profile"""
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminUserManagementView(APIView):
+    """
+    Admin endpoints for user management
+    """
+    permission_classes = [permissions.IsAuthenticated, AdminScopePermission]
+
+    @require_scope('admin', 'user_management')
+    def get(self, request):
+        """List all users (admin only)"""
+        users = CustomUser.objects.all().order_by('-date_joined')
+        serializer = UserListSerializer(users, many=True)
+        return Response(serializer.data)
+
+    @require_permission('create_users')
+    def post(self, request):
+        """Create admin user (admin only)"""
+        data = request.data.copy()
+        data['role'] = 'admin'
+        serializer = UserRegistrationSerializer(data=data)
+
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
+                UserSerializer(user).data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TrialManagementView(APIView):
+    """
+    Admin endpoint for trial management
+    """
+    permission_classes = [permissions.IsAuthenticated, AdminScopePermission]
+
+    @require_permission('manage_trials')
+    def post(self, request):
+        """Manage user trials (admin only)"""
+        serializer = TrialManagementSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        user_id = serializer.validated_data['user_id']
+        action = serializer.validated_data['action']
+        days = serializer.validated_data.get('days', 7)
+
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Perform trial action
+        if action == 'start':
+            success, message = user.start_free_trial(days)
+        elif action == 'extend':
+            success, message = user.extend_trial(days)
+        elif action == 'cancel':
+            success, message = user.cancel_trial()
+
+        if success:
+            return Response({
+                "message": message,
+                "user": UserSerializer(user).data
+            })
+        else:
+            return Response(
+                {"error": message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class ScopeViewSet(viewsets.ReadOnlyModelViewSet):
@@ -595,4 +761,85 @@ class DashboardStatsView(APIView):
                 'favorited': favorited_messages,
                 'this_week': messages_this_week
             }
+        })
+
+
+class ScopeManagementView(APIView):
+    """
+    API endpoints for scope and permission management
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Get user's current scopes and permissions"""
+        scope_info = ScopeManager.get_user_scope_info(request.user)
+        return Response(scope_info)
+
+    def post(self, request):
+        """Check if user has access to specific scopes or permissions"""
+        scopes = request.data.get('scopes', [])
+        permissions = request.data.get('permissions', [])
+        feature = request.data.get('feature')
+
+        result = {}
+
+        if scopes:
+            result['scope_check'] = ScopeManager.validate_scope_request(request.user, scopes)
+
+        if permissions:
+            result['permission_check'] = ScopeManager.validate_permission_request(request.user, permissions)
+
+        if feature:
+            result['feature_check'] = ScopeManager.get_feature_access_info(request.user, feature)
+
+        return Response(result)
+
+
+class FeatureTestView(APIView):
+    """
+    Test endpoints for different feature access levels
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    @require_feature('basic_profile')
+    def get(self, request):
+        """Basic feature - available to all authenticated users"""
+        return Response({
+            'message': 'Basic feature accessed successfully',
+            'feature': 'basic_profile',
+            'user_role': request.user.role,
+        })
+
+    @require_feature('trial_features')
+    def post(self, request):
+        """Trial feature - requires active trial"""
+        return Response({
+            'message': 'Trial feature accessed successfully',
+            'feature': 'trial_features',
+            'trial_remaining_days': request.user.trial_remaining_days,
+        })
+
+    @require_feature('subscriber_features')
+    def patch(self, request):
+        """Subscriber feature - requires active subscription"""
+        return Response({
+            'message': 'Subscriber feature accessed successfully',
+            'feature': 'subscriber_features',
+            'active_subscriptions': request.user.subscriptions.filter(
+                status='active',
+                end_date__gt=timezone.now()
+            ).count(),
+        })
+
+    @require_feature('custom_goals')
+    def delete(self, request):
+        """Custom goals feature - requires subscription with custom goals"""
+        return Response({
+            'message': 'Custom goals feature accessed successfully',
+            'feature': 'custom_goals',
+            'has_custom_goals_access': request.user.subscriptions.filter(
+                status='active',
+                end_date__gt=timezone.now(),
+                package__custom_goals_enabled=True
+            ).exists(),
         })

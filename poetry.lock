@@ -382,6 +382,25 @@ asgiref = ">=3.6"
 django = ">=4.2"
 
 [[package]]
+name = "django-countries"
+version = "8.2.0"
+description = "Provides a country field for Django models."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "django_countries-8.2.0-py3-none-any.whl", hash = "sha256:2b2617bec7c15dc735bdec38ae89f0058e38fddfffdb19a7f6b75ef1e3d5380f"},
+    {file = "django_countries-8.2.0.tar.gz", hash = "sha256:6df3883180599052c7dfa9a8be0601792441cfb248935dc229ad1ac92e9e39e3"},
+]
+
+[package.dependencies]
+asgiref = "*"
+typing-extensions = "*"
+
+[package.extras]
+pyuca = ["pyuca"]
+
+[[package]]
 name = "django-redis"
 version = "6.0.0"
 description = "Full featured redis cache backend for Django."
@@ -1613,4 +1632,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "777c840794f9f0525b380e47037d679bcd9ae2a4f561d7c0aff9bf9848aec15b"
+content-hash = "89a9df892b11a2e2b24252cc3e3945177c0b7a7bb9037280c157472a79f0696a"

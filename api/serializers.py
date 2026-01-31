@@ -1,17 +1,33 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django_countries.serializer_fields import CountryField
 from .models import (
-    Scope, Package, Subscription, UserGoal,
+    CustomUser, Scope, Package, Subscription, UserGoal,
     AIMessage, PaymentTransaction
 )
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User model"""
+    """Serializer for CustomUser model"""
+    country = CountryField(read_only=True)
+    full_name = serializers.ReadOnlyField()
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+    has_active_trial = serializers.ReadOnlyField()
+    trial_remaining_days = serializers.ReadOnlyField()
+
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined']
-        read_only_fields = ['id', 'date_joined']
+        model = CustomUser
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'full_name', 'role', 'role_display', 'mobile_phone', 'country',
+            'date_of_birth', 'is_phone_verified', 'trial_started_at',
+            'trial_expires_at', 'has_used_trial', 'has_active_trial',
+            'trial_remaining_days', 'date_joined'
+        ]
+        read_only_fields = [
+            'id', 'date_joined', 'is_phone_verified', 'trial_started_at',
+            'trial_expires_at', 'has_used_trial'
+        ]
 
 
 class ScopeSerializer(serializers.ModelSerializer):
@@ -259,3 +275,142 @@ class SubscriptionCreateSerializer(serializers.Serializer):
             )
 
         return value
+
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    """Serializer for user registration"""
+    password = serializers.CharField(write_only=True, min_length=8)
+    password_confirm = serializers.CharField(write_only=True)
+    country = CountryField(required=False)
+    start_trial = serializers.BooleanField(default=True, write_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'password', 'password_confirm',
+            'first_name', 'last_name', 'role', 'mobile_phone',
+            'country', 'date_of_birth', 'start_trial'
+        ]
+        extra_kwargs = {
+            'role': {'default': 'normal'}
+        }
+
+    def validate_email(self, value):
+        """Validate email is unique"""
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
+
+    def validate_username(self, value):
+        """Validate username is unique"""
+        if CustomUser.objects.filter(username=value).exists():
+            raise serializers.ValidationError("A user with this username already exists.")
+        return value
+
+    def validate(self, data):
+        """Validate passwords match"""
+        if data['password'] != data['password_confirm']:
+            raise serializers.ValidationError("Passwords don't match.")
+        return data
+
+    def create(self, validated_data):
+        """Create user with encrypted password and optional trial"""
+        validated_data.pop('password_confirm')
+        start_trial = validated_data.pop('start_trial', True)
+
+        user = CustomUser.objects.create_user(
+            password=validated_data.pop('password'),
+            **validated_data
+        )
+
+        # Auto-start free trial for normal users and subscribers
+        if start_trial and user.role in ['normal', 'subscriber']:
+            user.start_free_trial()
+
+        return user
+
+
+class UserLoginSerializer(serializers.Serializer):
+    """Serializer for user login"""
+    username = serializers.CharField(
+        help_text="Username or email address"
+    )
+    password = serializers.CharField()
+
+    def validate(self, data):
+        """Validate username/email and password"""
+        username = data.get('username')
+        password = data.get('password')
+
+        if username and password:
+            # Try to authenticate with username or email
+            user = None
+
+            # First, try to find user by username
+            try:
+                user_obj = CustomUser.objects.get(username=username)
+                user = authenticate(
+                    request=self.context.get('request'),
+                    username=user_obj.email,
+                    password=password
+                )
+            except CustomUser.DoesNotExist:
+                # If not found by username, try as email directly
+                user = authenticate(
+                    request=self.context.get('request'),
+                    username=username,
+                    password=password
+                )
+
+            if not user:
+                raise serializers.ValidationError("Invalid credentials.")
+
+            if not user.is_active:
+                raise serializers.ValidationError("User account is disabled.")
+
+            data['user'] = user
+            return data
+        else:
+            raise serializers.ValidationError("Must include username/email and password.")
+
+
+class TrialManagementSerializer(serializers.Serializer):
+    """Serializer for admin trial management"""
+    user_id = serializers.IntegerField()
+    action = serializers.ChoiceField(choices=['start', 'extend', 'cancel'])
+    days = serializers.IntegerField(required=False, min_value=1, max_value=365)
+
+    def validate_user_id(self, value):
+        """Validate user exists"""
+        if not CustomUser.objects.filter(id=value).exists():
+            raise serializers.ValidationError("User not found.")
+        return value
+
+    def validate(self, data):
+        """Validate action-specific requirements"""
+        action = data['action']
+
+        if action == 'extend' and 'days' not in data:
+            raise serializers.ValidationError("Days field is required for extend action.")
+
+        return data
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    """Serializer for admin user list"""
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+    has_active_trial = serializers.ReadOnlyField()
+    trial_remaining_days = serializers.ReadOnlyField()
+    active_subscription_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'role', 'role_display', 'is_active', 'date_joined',
+            'has_active_trial', 'trial_remaining_days', 'active_subscription_count'
+        ]
+
+    def get_active_subscription_count(self, obj):
+        """Get count of active subscriptions"""
+        return obj.subscriptions.filter(status='active').count()

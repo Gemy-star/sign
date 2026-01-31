@@ -1,7 +1,273 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth.models import AbstractUser
+from django_countries.fields import CountryField
+
+
+class CustomUser(AbstractUser):
+    """
+    Custom user model with additional fields for mobile phone and country
+    """
+    USER_ROLES = [
+        ('admin', 'Admin'),
+        ('subscriber', 'Subscriber'),
+        ('normal', 'Normal'),
+    ]
+
+    email = models.EmailField(unique=True)
+    role = models.CharField(max_length=20, choices=USER_ROLES, default='normal')
+    mobile_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text="Mobile phone number with country code"
+    )
+    country = CountryField(
+        blank=True,
+        null=True,
+        help_text="Country of residence"
+    )
+    date_of_birth = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Date of birth"
+    )
+    is_phone_verified = models.BooleanField(
+        default=False,
+        help_text="Whether the mobile phone number has been verified"
+    )
+    phone_verification_code = models.CharField(
+        max_length=6,
+        blank=True,
+        null=True,
+        help_text="Verification code for phone number"
+    )
+    phone_verification_expires = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="Expiration time for phone verification code"
+    )
+
+    # Free trial fields
+    trial_started_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When the free trial started"
+    )
+    trial_expires_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        help_text="When the free trial expires"
+    )
+    has_used_trial = models.BooleanField(
+        default=False,
+        help_text="Whether the user has used their free trial"
+    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+
+    def __str__(self):
+        return f"{self.email} ({self.username})"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
+
+    def get_display_name(self):
+        if self.full_name:
+            return self.full_name
+        return self.username
+
+    @property
+    def is_admin(self):
+        """Check if user is admin"""
+        return self.role == 'admin'
+
+    @property
+    def is_normal(self):
+        """Check if user is normal"""
+        return self.role == 'normal'
+
+    @property
+    def is_subscriber(self):
+        """Check if user is subscriber"""
+        return self.role == 'subscriber'
+
+    @property
+    def has_active_trial(self):
+        """Check if user has an active free trial"""
+        if not self.trial_expires_at:
+            return False
+        return timezone.now() < self.trial_expires_at
+
+    @property
+    def trial_remaining_days(self):
+        """Get remaining days in trial"""
+        if not self.trial_expires_at:
+            return 0
+        delta = self.trial_expires_at - timezone.now()
+        return max(0, delta.days)
+
+    def start_free_trial(self, trial_days=7):
+        """Start free trial for user"""
+        if self.has_used_trial:
+            return False, "User has already used their free trial"
+
+        self.trial_started_at = timezone.now()
+        self.trial_expires_at = self.trial_started_at + timedelta(days=trial_days)
+        self.has_used_trial = True
+        self.save()
+
+        return True, f"Free trial started for {trial_days} days"
+
+    def upgrade_to_subscriber(self):
+        """Upgrade normal user to subscriber when they purchase subscription"""
+        if self.role == 'normal':
+            self.role = 'subscriber'
+            self.save()
+            return True, "User upgraded to subscriber"
+        return False, "User is already a subscriber or admin"
+
+    def downgrade_to_normal(self):
+        """Downgrade subscriber back to normal (admin only)"""
+        if self.role == 'subscriber':
+            self.role = 'normal'
+            self.save()
+            return True, "User downgraded to normal"
+        return False, "User is not a subscriber"
+
+    def get_user_scopes(self):
+        """Get user's available scopes based on subscription and trial"""
+        scopes = []
+
+        # Admin has access to all scopes
+        if self.is_admin:
+            scopes.extend(['admin', 'user_management', 'trial_management', 'all_content'])
+
+        # Check for active subscription or trial
+        has_access = False
+        if self.has_active_trial:
+            has_access = True
+            scopes.append('trial')
+
+        # Check for active subscriptions
+        active_subscriptions = self.subscriptions.filter(
+            status='active',
+            end_date__gt=timezone.now()
+        )
+
+        if active_subscriptions.exists():
+            has_access = True
+            scopes.append('subscriber')
+
+            # Add package-specific scopes
+            for sub in active_subscriptions:
+                if sub.package.custom_goals_enabled:
+                    scopes.append('custom_goals')
+                if sub.package.priority_support:
+                    scopes.append('priority_support')
+                if sub.package.messages_per_day > 0:
+                    scopes.append(f'messages_{sub.package.messages_per_day}_per_day')
+
+        # Basic scopes for all authenticated users
+        if self.is_authenticated:
+            scopes.extend(['profile', 'basic_access'])
+
+        return list(set(scopes))  # Remove duplicates
+
+    def get_user_permissions(self):
+        """Get user's permissions based on role and subscription"""
+        permissions = []
+
+        # Role-based permissions
+        if self.is_admin:
+            permissions.extend([
+                'create_users', 'delete_users', 'manage_trials',
+                'view_all_users', 'manage_subscriptions'
+            ])
+
+        if self.is_subscriber or self.is_normal:
+            permissions.extend([
+                'view_profile', 'update_profile', 'create_goals',
+                'view_own_subscriptions', 'manage_own_goals'
+            ])
+
+        # Trial-specific permissions
+        if self.has_active_trial:
+            permissions.extend(['trial_access', 'limited_features'])
+
+        # Subscription-based permissions
+        active_subscriptions = self.subscriptions.filter(
+            status='active',
+            end_date__gt=timezone.now()
+        )
+
+        for sub in active_subscriptions:
+            if sub.package.custom_goals_enabled:
+                permissions.append('create_custom_goals')
+            if sub.package.priority_support:
+                permissions.append('priority_support')
+            if sub.package.messages_per_day > 1:
+                permissions.append('multiple_messages')
+
+        return list(set(permissions))  # Remove duplicates
+
+    def has_scope(self, scope):
+        """Check if user has a specific scope"""
+        return scope in self.get_user_scopes()
+
+    def has_permission(self, permission):
+        """Check if user has a specific permission"""
+        return permission in self.get_user_permissions()
+
+    def can_access_feature(self, feature):
+        """Check if user can access a specific feature"""
+        # Check based on role, subscription, and trial
+        if self.is_admin:
+            return True
+
+        if feature in ['basic_profile', 'view_content']:
+            return True
+
+        if feature == 'trial_features' and self.has_active_trial:
+            return True
+
+        if feature == 'subscriber_features':
+            return self.is_subscriber and self.subscriptions.filter(
+                status='active',
+                end_date__gt=timezone.now()
+            ).exists()
+
+        if feature == 'custom_goals':
+            return self.subscriptions.filter(
+                status='active',
+                end_date__gt=timezone.now(),
+                package__custom_goals_enabled=True
+            ).exists()
+
+        return False
+
+    def extend_trial(self, additional_days):
+        """Extend existing trial (admin only)"""
+        if not self.trial_expires_at:
+            return False, "No active trial to extend"
+
+        self.trial_expires_at += timedelta(days=additional_days)
+        self.save()
+
+        return True, f"Trial extended by {additional_days} days"
+
+    def cancel_trial(self):
+        """Cancel free trial (admin only)"""
+        self.trial_expires_at = timezone.now()
+        self.save()
+        return True, "Trial cancelled"
 
 
 class Scope(models.Model):
@@ -86,7 +352,7 @@ class Subscription(models.Model):
         ('failed', 'Payment Failed'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='subscriptions')
     package = models.ForeignKey(Package, on_delete=models.PROTECT, related_name='subscriptions')
     selected_scopes = models.ManyToManyField(Scope, related_name='subscriptions', blank=True)
 
@@ -127,6 +393,11 @@ class Subscription(models.Model):
         self.status = 'active'
         self.start_date = timezone.now()
         self.end_date = self.start_date + timedelta(days=self.package.duration_days)
+
+        # Upgrade normal user to subscriber
+        if self.user.is_normal:
+            self.user.upgrade_to_subscriber()
+
         self.save()
 
     def cancel(self):
@@ -148,7 +419,7 @@ class UserGoal(models.Model):
         ('archived', 'Archived'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='goals')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='goals')
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name='goals')
     scope = models.ForeignKey(Scope, on_delete=models.SET_NULL, null=True, related_name='user_goals')
 
@@ -182,7 +453,7 @@ class AIMessage(models.Model):
         ('custom', 'Custom Request'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ai_messages')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ai_messages')
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name='messages')
     scope = models.ForeignKey(Scope, on_delete=models.SET_NULL, null=True, blank=True, related_name='messages')
     goal = models.ForeignKey(UserGoal, on_delete=models.SET_NULL, null=True, blank=True, related_name='messages')
@@ -228,7 +499,7 @@ class PaymentTransaction(models.Model):
     ]
 
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name='transactions')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_transactions')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='payment_transactions')
 
     # Tap Payment details
     tap_charge_id = models.CharField(max_length=255, unique=True)

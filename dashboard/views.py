@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
@@ -10,14 +9,16 @@ from datetime import timedelta
 import os
 from api.models import (
     Scope, Package, Subscription, UserGoal,
-    AIMessage, PaymentTransaction
+    AIMessage, PaymentTransaction, CustomUser
 )
 from django.contrib.auth.models import User
+from .decorators import admin_required
 
 
 def home_redirect(request):
     """Redirect root URL to dashboard or login"""
-    if request.user.is_authenticated and request.user.is_staff:
+    if request.user.is_authenticated and (request.user.is_staff or
+                                         (hasattr(request.user, 'role') and request.user.role == 'admin')):
         return redirect('dashboard:home')
     return redirect('login')
 
@@ -25,25 +26,40 @@ def home_redirect(request):
 def login_view(request):
     """Custom login view"""
     if request.user.is_authenticated:
-        if request.user.is_staff:
+        if request.user.is_staff or (hasattr(request.user, 'role') and request.user.role == 'admin'):
             return redirect('dashboard:home')
         else:
             logout(request)
-            messages.warning(request, 'يجب أن تكون موظفًا للوصول إلى لوحة التحكم')
+            messages.warning(request, 'يجب أن تكون مديرًا للوصول إلى لوحة التحكم')
 
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        # Try to authenticate with username first, then email
+        user = None
+        if username:
+            # First try as username (for backward compatibility)
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            try:
+                # Try to find user by username
+                user_obj = User.objects.get(username=username)
+                user = authenticate(request, username=user_obj.email, password=password)
+            except User.DoesNotExist:
+                # If not found by username, try as email
+                user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            if user.is_staff:
+            # Check if user is superuser (is_staff) or has admin role in CustomUser
+            is_dashboard_user = user.is_staff or (hasattr(user, 'role') and user.role == 'admin')
+
+            if is_dashboard_user:
                 login(request, user)
                 next_url = request.GET.get('next', 'dashboard:home')
                 return redirect(next_url)
             else:
-                messages.error(request, 'يجب أن تكون موظفًا للوصول إلى لوحة التحكم')
+                messages.error(request, 'يجب أن تكون مديرًا للوصول إلى لوحة التحكم')
         else:
             messages.error(request, 'اسم المستخدم أو كلمة المرور غير صحيحة')
 
@@ -67,7 +83,7 @@ def terms_conditions(request):
     return render(request, 'dashboard/terms_conditions.html')
 
 
-@staff_member_required
+@admin_required
 def settings_view(request):
     """System settings page"""
     from django.conf import settings
@@ -117,18 +133,58 @@ def settings_view(request):
     return render(request, 'dashboard/settings.html', context)
 
 
-@staff_member_required
+@admin_required
 def dashboard_home(request):
     """Dashboard home page with statistics and charts"""
 
-    # Calculate statistics
-    total_users = User.objects.count()
+    # Calculate statistics using CustomUser
+    total_users = CustomUser.objects.count()
     total_subscriptions = Subscription.objects.filter(status='active').count()
     total_revenue = PaymentTransaction.objects.filter(
         status='completed'
     ).aggregate(Sum('amount'))['amount__sum'] or 0
 
     total_messages = AIMessage.objects.count()
+
+    # User role statistics
+    normal_users = CustomUser.objects.filter(role='normal').count()
+    subscribers = CustomUser.objects.filter(role='subscriber').count()
+    admins = CustomUser.objects.filter(role='admin').count()
+
+    # Calculate percentages
+    if total_users > 0:
+        normal_users_percent = (normal_users / total_users) * 100
+        subscribers_percent = (subscribers / total_users) * 100
+        admins_percent = (admins / total_users) * 100
+    else:
+        normal_users_percent = subscribers_percent = admins_percent = 0
+
+    # Trial statistics
+    active_trials = CustomUser.objects.filter(
+        trial_expires_at__gt=timezone.now(),
+        has_used_trial=True
+    ).count()
+
+    used_trials = CustomUser.objects.filter(has_used_trial=True).count()
+
+    # Trials expiring in next 3 days
+    expiring_soon = CustomUser.objects.filter(
+        trial_expires_at__gt=timezone.now(),
+        trial_expires_at__lte=timezone.now() + timedelta(days=3),
+        has_used_trial=True
+    ).count()
+
+    # Trial to subscription conversion rate
+    users_with_trials = CustomUser.objects.filter(has_used_trial=True).count()
+    converted_users = CustomUser.objects.filter(
+        role='subscriber',
+        has_used_trial=True
+    ).count()
+
+    if users_with_trials > 0:
+        trial_to_sub_conversion = (converted_users / users_with_trials) * 100
+    else:
+        trial_to_sub_conversion = 0
 
     # Recent activity
     recent_subscriptions = Subscription.objects.select_related(
@@ -146,7 +202,7 @@ def dashboard_home(request):
     # Users joined per day
     users_per_day = []
     for day in last_7_days:
-        count = User.objects.filter(
+        count = CustomUser.objects.filter(
             date_joined__date=day.date()
         ).count()
         users_per_day.append(count)
@@ -170,6 +226,21 @@ def dashboard_home(request):
         'total_subscriptions': total_subscriptions,
         'total_revenue': total_revenue,
         'total_messages': total_messages,
+
+        # User role statistics
+        'normal_users': normal_users,
+        'subscribers': subscribers,
+        'admins': admins,
+        'normal_users_percent': normal_users_percent,
+        'subscribers_percent': subscribers_percent,
+        'admins_percent': admins_percent,
+
+        # Trial statistics
+        'active_trials': active_trials,
+        'used_trials': used_trials,
+        'expiring_soon': expiring_soon,
+        'trial_to_sub_conversion': round(trial_to_sub_conversion, 1),
+
         'recent_subscriptions': recent_subscriptions,
         'recent_messages': recent_messages,
         'users_per_day': users_per_day,
@@ -181,7 +252,7 @@ def dashboard_home(request):
     return render(request, 'dashboard/home.html', context)
 
 
-@staff_member_required
+@admin_required
 def packages_list(request):
     """List all packages"""
     packages = Package.objects.annotate(
@@ -196,7 +267,7 @@ def packages_list(request):
     return render(request, 'dashboard/packages.html', context)
 
 
-@staff_member_required
+@admin_required
 def subscriptions_list(request):
     """List all subscriptions"""
     status_filter = request.GET.get('status', '')
@@ -235,7 +306,7 @@ def subscriptions_list(request):
     return render(request, 'dashboard/subscriptions.html', context)
 
 
-@staff_member_required
+@admin_required
 def subscription_detail(request, pk):
     """View subscription details"""
     subscription = get_object_or_404(
@@ -258,7 +329,7 @@ def subscription_detail(request, pk):
     return render(request, 'dashboard/subscription_detail.html', context)
 
 
-@staff_member_required
+@admin_required
 def messages_list(request):
     """List all AI messages"""
     message_type = request.GET.get('type', '')
@@ -292,10 +363,10 @@ def messages_list(request):
     return render(request, 'dashboard/messages.html', context)
 
 
-@staff_member_required
+@admin_required
 def users_list(request):
     """List all users"""
-    users = User.objects.annotate(
+    users = CustomUser.objects.annotate(
         active_subs=Count('subscriptions', filter=Q(subscriptions__status='active')),
         total_messages=Count('ai_messages')
     ).order_by('-date_joined')[:50]
@@ -309,11 +380,11 @@ def users_list(request):
 
     for day in last_7_days:
         # New users joined on that day
-        new_count = User.objects.filter(date_joined__date=day.date()).count()
+        new_count = CustomUser.objects.filter(date_joined__date=day.date()).count()
         new_users_per_day.append(new_count)
 
         # Active users (users with active subscriptions or messages on that day)
-        active_count = User.objects.filter(
+        active_count = CustomUser.objects.filter(
             Q(subscriptions__status='active', subscriptions__start_date__lte=day) |
             Q(ai_messages__created_at__date=day.date())
         ).distinct().count()
@@ -329,10 +400,10 @@ def users_list(request):
     return render(request, 'dashboard/users.html', context)
 
 
-@staff_member_required
+@admin_required
 def user_detail(request, pk):
     """View user details"""
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(CustomUser, pk=pk)
 
     # Get user's subscriptions
     subscriptions = Subscription.objects.filter(user=user).select_related('package').order_by('-created_at')
@@ -367,7 +438,7 @@ def user_detail(request, pk):
     return render(request, 'dashboard/user_detail.html', context)
 
 
-@staff_member_required
+@admin_required
 def user_create(request):
     """Create a new user"""
     if request.method == 'POST':
@@ -376,27 +447,29 @@ def user_create(request):
         first_name = request.POST.get('first_name', '')
         last_name = request.POST.get('last_name', '')
         password = request.POST.get('password')
+        role = request.POST.get('role', 'normal')  # Add role field
         is_staff = request.POST.get('is_staff') == 'on'
         is_active = request.POST.get('is_active', 'on') == 'on'
 
         try:
             # Check if username exists
-            if User.objects.filter(username=username).exists():
+            if CustomUser.objects.filter(username=username).exists():
                 messages.error(request, 'اسم المستخدم موجود بالفعل')
                 return render(request, 'dashboard/user_form.html')
 
             # Check if email exists
-            if email and User.objects.filter(email=email).exists():
+            if email and CustomUser.objects.filter(email=email).exists():
                 messages.error(request, 'البريد الإلكتروني موجود بالفعل')
                 return render(request, 'dashboard/user_form.html')
 
-            # Create user
-            user = User.objects.create_user(
+            # Create CustomUser
+            user = CustomUser.objects.create_user(
                 username=username,
                 email=email,
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
+                role=role,
                 is_staff=is_staff,
                 is_active=is_active
             )
@@ -411,16 +484,17 @@ def user_create(request):
     return render(request, 'dashboard/user_form.html', {'is_edit': False})
 
 
-@staff_member_required
+@admin_required
 def user_edit(request, pk):
     """Edit user details"""
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(CustomUser, pk=pk)
 
     if request.method == 'POST':
         user.username = request.POST.get('username', user.username)
         user.email = request.POST.get('email', user.email)
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
+        user.role = request.POST.get('role', user.role)  # Add role field
         user.is_staff = request.POST.get('is_staff') == 'on'
         user.is_active = request.POST.get('is_active', 'on') == 'on'
 
@@ -443,7 +517,7 @@ def user_edit(request, pk):
     return render(request, 'dashboard/user_form.html', context)
 
 
-@staff_member_required
+@admin_required
 def scopes_list(request):
     """List all scopes"""
     scopes = Scope.objects.annotate(
@@ -481,7 +555,7 @@ def scopes_list(request):
     return render(request, 'dashboard/scopes.html', context)
 
 
-@staff_member_required
+@admin_required
 def analytics_api(request):
     """API endpoint for analytics data"""
 
@@ -531,7 +605,7 @@ def analytics_api(request):
 
 
 # Package CRUD Views
-@staff_member_required
+@admin_required
 def package_create(request):
     """Create a new package"""
     if request.method == 'POST':
@@ -558,7 +632,7 @@ def package_create(request):
     return render(request, 'dashboard/package_form.html', {'is_edit': False})
 
 
-@staff_member_required
+@admin_required
 def package_edit(request, pk):
     """Edit package details"""
     package = get_object_or_404(Package, pk=pk)
@@ -592,7 +666,7 @@ def package_edit(request, pk):
 
 
 # Scope CRUD Views
-@staff_member_required
+@admin_required
 def scope_create(request):
     """Create a new scope"""
     if request.method == 'POST':
@@ -616,7 +690,7 @@ def scope_create(request):
     return render(request, 'dashboard/scope_form.html', context)
 
 
-@staff_member_required
+@admin_required
 def scope_edit(request, pk):
     """Edit scope details"""
     scope = get_object_or_404(Scope, pk=pk)
@@ -644,7 +718,7 @@ def scope_edit(request, pk):
 
 
 # Subscription Edit View
-@staff_member_required
+@admin_required
 def subscription_edit(request, pk):
     """Edit subscription details"""
     subscription = get_object_or_404(Subscription, pk=pk)

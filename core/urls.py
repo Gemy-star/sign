@@ -31,32 +31,60 @@ from dashboard import views as dashboard_views
 # Swagger/OpenAPI Schema
 schema_view = get_schema_view(
     openapi.Info(
-        title="Sign SA API",
+        title="Personal Development API",
         default_version='v1',
         description="""
-        ## Welcome to the Sign SA API
+        ## Welcome to the Personal Development API
 
         This API provides a comprehensive subscription-based platform for personal development
-        and growth. Users can subscribe to packages, select their focus areas (scopes),
-        set personal goals, and receive AI-generated messages.
+        and growth with role-based access control and scope management.
 
         ### Key Features:
-        - **Subscription Management**: Multiple package tiers with different features
+        - **User Management**: Normal users, subscribers, and admin roles
+        - **Scope-Based Access**: Dynamic permissions based on user role and subscription
+        - **Trial System**: Free trials for new users with automatic upgrade to subscribers
         - **Personal Development Scopes**: 8 life domains including mental, physical, career, financial, etc.
         - **Custom Goals**: Set and track personal development goals
         - **AI-Generated Messages**: Personalized content powered by ChatGPT
         - **Payment Integration**: Secure payments via Tap Payment Gateway
 
-        ### Authentication:
-        This API uses JWT (JSON Web Token) authentication. Obtain your token from `/api/auth/token/`
-        and include it in the Authorization header: `Bearer <your_token>`
+        ### Authentication & Authorization:
+        The API uses JWT (JSON Web Token) authentication with embedded scopes and permissions.
+
+        1. **Register**: `POST /api/auth/register/`
+        2. **Login**: `POST /api/auth/login/` - Returns JWT with user scopes
+        3. **Include Token**: `Authorization: Bearer <your_jwt_token>`
+
+        ### User Roles & Scopes:
+        - **Normal Users**: Basic access, can start trials
+        - **Subscribers**: Full access to subscribed features
+        - **Admins**: Full administrative access including user management
+
+        ### API Endpoints:
+        - **Authentication**: `/api/auth/` - Registration, login, profile management
+        - **User Management**: `/api/admin/` - Admin-only user and trial management
+        - **Scopes & Features**: `/api/scopes/` - Scope validation and feature access
+        - **Subscriptions**: `/api/subscriptions/` - Package management and payments
+        - **Goals**: `/api/goals/` - Personal goal tracking
+        - **Messages**: `/api/messages/` - AI-generated guidance
+        - **Dashboard**: `/api/dashboard/stats/` - User statistics and insights
+
+        ### Scope-Based Access Control:
+        Each JWT token includes user scopes and permissions. Endpoints are protected based on:
+        - User role (admin, subscriber, normal)
+        - Active trial status
+        - Subscription level and features
+        - Package-specific permissions (custom goals, priority support, etc.)
         """,
-        terms_of_service="https://www.sign-sa.net/terms/",
-        contact=openapi.Contact(email="support@sign-sa.net"),
+        terms_of_service="https://example.com/terms/",
+        contact=openapi.Contact(email="support@example.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    patterns=[
+        path('api/', include('api.urls')),
+    ],
 )
 
 urlpatterns = [

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'constance',
     'constance.backends.database',
+    'django_countries',
 
     # Local apps
     'api',
@@ -112,6 +113,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom User Model
+AUTH_USER_MODEL = 'api.CustomUser'
 
 # REST Framework Settings
 REST_FRAMEWORK = {
@@ -358,10 +362,86 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django.utils.autoreload': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Reduce autoreload debug messages
+            'propagate': False,
+        },
         'api': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': False,
         },
     },
+}
+
+# Swagger/OpenAPI Configuration
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'SUPPORTED_SUBMIT_METHODS': [
+        'get',
+        'post',
+        'put',
+        'delete',
+        'patch'
+    ],
+    'OPERATIONS_SORTER': 'alpha',
+    'TAGS_SORTER': 'alpha',
+    'DOC_EXPANSION': 'none',
+    'DEEP_LINKING': True,
+    'SHOW_EXTENSIONS': True,
+    'DEFAULT_MODEL_RENDERING': 'example',
+    'DEFAULT_INFO_DEPTH': 2,
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
+}
+
+# API Documentation
+API_DOCS = {
+    'title': 'Personal Development API',
+    'description': '''
+    ## Overview
+    This API provides endpoints for personal development, goal tracking, and AI-powered guidance.
+
+    ## Authentication
+    The API uses JWT (JSON Web Token) authentication. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your_jwt_token>
+    ```
+
+    ## User Roles and Scopes
+    - **Normal Users**: Basic access, can start trials
+    - **Subscribers**: Full access to subscribed features
+    - **Admins**: Full administrative access
+
+    ## Features
+    - User authentication and profile management
+    - Goal setting and tracking
+    - AI-powered guidance and insights
+    - Subscription management
+    - Trial system for new users
+
+    ## Rate Limiting
+    API requests are limited based on user subscription level.
+    ''',
+    'contact': {
+        'name': 'API Support',
+        'email': 'support@example.com'
+    },
+    'license': {
+        'name': 'MIT License',
+        'url': 'https://opensource.org/licenses/MIT'
+    },
+    'version': '1.0.0',
+    'terms_of_service': 'https://example.com/terms/',
 }
