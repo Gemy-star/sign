@@ -411,8 +411,17 @@
     <!-- Page Loader -->
     <div class="page-loader" id="pageLoader">
         <div class="loader-content">
+            <div class="loader-icon-wrapper">
+                <i class="fas fa-cog loader-icon-bg"></i>
+                <img src="{% static 'images/loader.png' %}" alt="Loading" class="loader-logo">
+                <i class="fas fa-sync-alt loader-icon-front"></i>
+            </div>
             <div class="loader-spinner"></div>
-            <div class="loader-text">جاري التحميل<span class="loader-dots"></span></div>
+            <div class="loader-text">
+                <i class="fas fa-rocket"></i>
+                جاري التحميل
+                <span class="loader-dots"></span>
+            </div>
         </div>
     </div>
 
