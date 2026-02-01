@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "الشروط والأحكام" %} - Sign SA</title>
+    <title>{% trans "الشروط والأحكام" %} - AiaY</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
@@ -25,7 +25,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #C96F4A 0%, #936036 50%, #53321D 100%);
             min-height: 100vh;
             padding: 40px 20px;
         }
@@ -38,7 +38,7 @@
         .terms-card {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(83, 50, 29, 0.4), 0 0 0 1px rgba(201, 111, 74, 0.1);
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
         }
@@ -55,10 +55,28 @@
         }
 
         .terms-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #C96F4A 0%, #936036 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terms-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(232, 206, 128, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .terms-header img {
@@ -66,18 +84,24 @@
             height: auto;
             margin-bottom: 20px;
             filter: brightness(0) invert(1);
+            position: relative;
+            z-index: 2;
         }
 
         .terms-header h1 {
             margin: 0;
             font-size: 32px;
             font-weight: 700;
+            position: relative;
+            z-index: 2;
         }
 
         .terms-header p {
             margin: 10px 0 0 0;
             opacity: 0.9;
             font-size: 16px;
+            position: relative;
+            z-index: 2;
         }
 
         .terms-body {
@@ -89,16 +113,27 @@
         }
 
         .terms-section h2 {
-            color: #667eea;
+            color: #C96F4A;
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 3px solid #E8CE80;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terms-section h2::before {
+            content: '';
+            width: 6px;
+            height: 24px;
+            background: linear-gradient(180deg, #C96F4A, #E8CE80);
+            border-radius: 3px;
         }
 
         .terms-section h3 {
-            color: #764ba2;
+            color: #936036;
             font-size: 20px;
             font-weight: 600;
             margin-top: 20px;
@@ -131,7 +166,7 @@
             font-weight: 900;
             position: absolute;
             right: 0;
-            color: #667eea;
+            color: #C96F4A;
         }
 
         .terms-section ol {
@@ -143,16 +178,17 @@
             counter-increment: item;
             position: absolute;
             right: 0;
-            color: #667eea;
+            color: #C96F4A;
             font-weight: 600;
         }
 
         .highlight-box {
-            background: #f8f9fa;
-            border-right: 4px solid #667eea;
+            background: linear-gradient(135deg, rgba(232, 206, 128, 0.15), rgba(201, 111, 74, 0.05));
+            border-right: 4px solid #C96F4A;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(201, 111, 74, 0.1);
         }
 
         .highlight-box p {
@@ -161,34 +197,43 @@
         }
 
         .warning-box {
-            background: #fff3cd;
-            border-right: 4px solid #ffc107;
+            background: linear-gradient(135deg, rgba(232, 206, 128, 0.2), rgba(255, 243, 205, 0.5));
+            border-right: 4px solid #E8CE80;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(232, 206, 128, 0.2);
         }
 
         .warning-box p {
             margin: 0;
-            color: #856404;
+            color: #936036;
+            font-weight: 500;
         }
 
         .back-link {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #C96F4A 0%, #936036 100%);
             color: white;
             text-decoration: none;
             border-radius: 25px;
             font-weight: 600;
             transition: all 0.3s ease;
             margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(201, 111, 74, 0.3);
         }
 
         .back-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(201, 111, 74, 0.5);
             color: white;
+        }
+
+        .back-link i {
+            font-size: 16px;
         }
 
         .terms-footer {
@@ -203,6 +248,9 @@
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .package-table th,
@@ -213,7 +261,7 @@
         }
 
         .package-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #C96F4A 0%, #936036 100%);
             color: white;
             font-weight: 600;
         }
@@ -250,7 +298,7 @@
     <div class="terms-container">
         <div class="terms-card">
             <div class="terms-header">
-                <img src="{% static 'images/logo-dark.png' %}" alt="Sign SA Logo" onerror="this.style.display='none'">
+                <img src="{% static 'images/logo-dark.png' %}" alt="AiaY Logo" onerror="this.style.display='none'">
                 <h1>{% trans "الشروط والأحكام" %}</h1>
               <p>{% trans "آخر تحديث:" %} {% now "j F Y" %}</p>
             </div>
@@ -260,21 +308,21 @@
                     <p>
                         <i class="fas fa-exclamation-triangle ms-2"></i>
                         <strong>{% trans "يرجى قراءة هذه الشروط والأحكام بعناية قبل استخدام منصتنا." %}</strong>
-                        {% trans "باستخدامك لخدمة Sign SA، فإنك توافق على الالتزام بهذه الشروط." %}
+                        {% trans "باستخدامك لخدمة AiaY، فإنك توافق على الالتزام بهذه الشروط." %}
                     </p>
                 </div>
 
                 <div class="terms-section">
                     <h2>{% trans "1. قبول الشروط" %}</h2>
                     <p>
-                        {% trans "بالوصول إلى منصة Sign SA أو استخدامها، فإنك توافق على الالتزام بهذه الشروط والأحكام وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على أي جزء من هذه الشروط، فلا يجوز لك استخدام خدماتنا." %}
+                        {% trans "بالوصول إلى منصة AiaY أو استخدامها، فإنك توافق على الالتزام بهذه الشروط والأحكام وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على أي جزء من هذه الشروط، فلا يجوز لك استخدام خدماتنا." %}
                     </p>
                 </div>
 
                 <div class="terms-section">
                     <h2>{% trans "2. وصف الخدمة" %}</h2>
                     <p>
-                        {% trans "Sign SA هي منصة تطوير شخصي قائمة على الاشتراك توفر:" %}
+                        {% trans "AiaY هي منصة تطوير شخصي قائمة على الاشتراك توفر:" %}
                     </p>
                     <ul>
                         <li>{% trans "رسائل تحفيزية يومية مخصصة مدعومة بالذكاء الاصطناعي" %}</li>
@@ -405,7 +453,7 @@
                 <div class="terms-section">
                     <h2>{% trans "9. الملكية الفكرية" %}</h2>
                     <ul>
-                        <li>{% trans "جميع المحتوى والعلامات التجارية مملوكة لـ Sign SA" %}</li>
+                        <li>{% trans "جميع المحتوى والعلامات التجارية مملوكة لـ AiaY" %}</li>
                         <li>{% trans "المحتوى المُنشأ بواسطة AI مرخص لاستخدامك الشخصي فقط" %}</li>
                         <li>{% trans "لا يجوز نشر أو إعادة توزيع المحتوى تجارياً" %}</li>
                         <li>{% trans "نحتفظ بجميع الحقوق غير الممنوحة صراحة" %}</li>
@@ -489,7 +537,7 @@
 
             <div class="terms-footer">
                 <p class="mb-0">
-                    © 2025 Sign SA. {% trans "جميع الحقوق محفوظة" %}.
+                    © 2025 AiaY. {% trans "جميع الحقوق محفوظة" %}.
                 </p>
             </div>
         </div>

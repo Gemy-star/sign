@@ -1,4 +1,4 @@
-# Sign SA API
+# AiaY API
 
 A comprehensive Django REST Framework API for a subscription-based personal development and messaging platform. The system integrates with OpenAI's ChatGPT for AI-generated content and Tap Payment Gateway for secure subscription management.
 

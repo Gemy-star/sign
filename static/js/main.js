@@ -1,5 +1,5 @@
 /* ============================================================================
-   SIGN SA DASHBOARD - MAIN JAVASCRIPT
+   AIAY DASHBOARD - MAIN JAVASCRIPT
    ============================================================================ */
 
 // Global Chart.js defaults configuration

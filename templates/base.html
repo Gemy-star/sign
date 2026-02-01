@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sign SA - Personal Development Platform with subscription-based goal tracking and AI-powered guidance">
+    <meta name="description" content="AiaY - Personal Development Platform with subscription-based goal tracking and AI-powered guidance">
     <meta name="keywords" content="personal development, goal tracking, AI guidance, subscription, self-improvement">
     <title>{% block title %}لوحة التحكم{% endblock title %} - AIAY</title>
 
@@ -283,14 +283,12 @@
     <!-- Page Loader -->
     <div class="page-loader" id="pageLoader">
         <div class="loader-content">
-            <div class="loader-icon-wrapper">
-                <i class="fas fa-cog loader-icon-bg"></i>
+            <div class="loader-wrapper">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring-2"></div>
                 <img src="{% static 'images/loader.png' %}" alt="Loading" class="loader-logo">
-                <i class="fas fa-sync-alt loader-icon-front"></i>
             </div>
-            <div class="loader-spinner"></div>
             <div class="loader-text">
-                <i class="fas fa-rocket"></i>
                 جاري التحميل
                 <span class="loader-dots"></span>
             </div>
