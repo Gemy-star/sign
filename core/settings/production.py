@@ -141,12 +141,13 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+        'emoji': {
+            '()': 'core.log_formatter.EmojiFormatter',
+            'format': 'LOG  {emoji} {module}.{funcName}: {message}',
             'style': '{',
         },
-        'simple': {
-            'format': '{levelname} {message}',
+        'plain': {
+            'format': '{levelname} {asctime} {module} {message}',
             'style': '{',
         },
     },
@@ -158,21 +159,21 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'emoji',
         },
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOGS_DIR, 'django.log'),
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 10,
-            'formatter': 'verbose',
+            'formatter': 'plain',
         },
         'error_file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(LOGS_DIR, 'error.log'),
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 10,
-            'formatter': 'verbose',
+            'formatter': 'plain',
             'level': 'ERROR',
         },
         'mail_admins': {

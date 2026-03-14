@@ -335,26 +335,27 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+        'emoji': {
+            '()': 'core.log_formatter.EmojiFormatter',
+            'format': 'LOG  {emoji} {module}.{funcName}: {message}',
             'style': '{',
         },
-        'simple': {
-            'format': '{levelname} {message}',
+        'plain': {
+            'format': '{levelname} {asctime} {module} {message}',
             'style': '{',
         },
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'emoji',
         },
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'django.log',
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 5,
-            'formatter': 'verbose',
+            'formatter': 'plain',
         },
     },
     'loggers': {
@@ -365,7 +366,7 @@ LOGGING = {
         },
         'django.utils.autoreload': {
             'handlers': ['console'],
-            'level': 'WARNING',  # Reduce autoreload debug messages
+            'level': 'WARNING',
             'propagate': False,
         },
         'api': {
