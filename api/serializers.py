@@ -339,39 +339,46 @@ class UserLoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Validate username/email and password"""
-        username = data.get('username')
+        identifier = data.get('username', '').strip()
         password = data.get('password')
 
-        if username and password:
-            # Try to authenticate with username or email
-            user = None
-
-            # First, try to find user by username
-            try:
-                user_obj = CustomUser.objects.get(username=username)
-                user = authenticate(
-                    request=self.context.get('request'),
-                    username=user_obj.email,
-                    password=password
-                )
-            except CustomUser.DoesNotExist:
-                # If not found by username, try as email directly
-                user = authenticate(
-                    request=self.context.get('request'),
-                    username=username,
-                    password=password
-                )
-
-            if not user:
-                raise serializers.ValidationError("Invalid credentials.")
-
-            if not user.is_active:
-                raise serializers.ValidationError("User account is disabled.")
-
-            data['user'] = user
-            return data
-        else:
+        if not identifier or not password:
             raise serializers.ValidationError("Must include username/email and password.")
+
+        user_obj = None
+
+        if '@' in identifier:
+            # Input looks like an email — search email field first (case-insensitive)
+            try:
+                user_obj = CustomUser.objects.get(email__iexact=identifier)
+            except CustomUser.DoesNotExist:
+                pass
+
+        if user_obj is None:
+            # Fall back to username lookup (case-insensitive)
+            try:
+                user_obj = CustomUser.objects.get(username__iexact=identifier)
+            except CustomUser.DoesNotExist:
+                pass
+
+        if user_obj is None:
+            raise serializers.ValidationError("Invalid credentials.")
+
+        # authenticate() requires the USERNAME_FIELD value (email) as the username kwarg
+        user = authenticate(
+            request=self.context.get('request'),
+            username=user_obj.email,
+            password=password,
+        )
+
+        if user is None:
+            raise serializers.ValidationError("Invalid credentials.")
+
+        if not user.is_active:
+            raise serializers.ValidationError("User account is disabled.")
+
+        data['user'] = user
+        return data
 
 
 class TrialManagementSerializer(serializers.Serializer):

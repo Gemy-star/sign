@@ -1,7 +1,7 @@
 # Mobile Responsive Testing Checklist
 
 ## Overview
-This document provides a comprehensive testing checklist for the mobile responsive improvements made to the Sign SA dashboard.
+This document provides a comprehensive testing checklist for the mobile responsive improvements made to the AIAY dashboard.
 
 ## Changes Summary
 1. ✅ Migrated all dashboard pages to Bootstrap 5 grid system

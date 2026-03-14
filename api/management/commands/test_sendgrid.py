@@ -47,7 +47,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'  ✓ EMAIL_FROM_NAME: {from_name}'))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'  ✗ EMAIL_FROM_NAME error: {e}'))
-            from_name = 'AiaY'
+            from_name = 'AIAY'
 
         self.stdout.write('')
 
@@ -58,12 +58,12 @@ class Command(BaseCommand):
         # Send test email
         self.stdout.write(f'Sending test email to: {recipient}')
 
-        subject = 'SendGrid Test Email from AiaY'
+        subject = 'SendGrid Test Email from AIAY'
 
         text_message = f"""
 Hello,
 
-This is a test email from AiaY to verify SendGrid configuration.
+This is a test email from AIAY to verify SendGrid configuration.
 
 If you're receiving this email, your SendGrid setup is working correctly!
 
@@ -74,7 +74,7 @@ Configuration Details:
 - Support Email: {config.SUPPORT_EMAIL}
 
 Best regards,
-The AiaY Team
+The AIAY Team
         """
 
         html_message = f"""
@@ -94,7 +94,7 @@ The AiaY Team
 
         <div style="background-color: white; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea; margin-bottom: 20px;">
             <p style="margin: 0; font-size: 16px;">
-                This is a test email from <strong>AiaY</strong> to verify SendGrid configuration.
+                This is a test email from <strong>AIAY</strong> to verify SendGrid configuration.
             </p>
         </div>
 
@@ -131,12 +131,12 @@ The AiaY Team
 
         <p style="font-size: 14px; color: #666; text-align: center; margin-top: 30px;">
             Best regards,<br>
-            <strong>The AiaY Team</strong>
+            <strong>The AIAY Team</strong>
         </p>
     </div>
 
     <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #999;">
-        <p>This is an automated test email from AiaY</p>
+        <p>This is an automated test email from AIAY</p>
     </div>
 </body>
 </html>

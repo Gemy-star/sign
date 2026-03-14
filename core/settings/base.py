@@ -225,7 +225,7 @@ CONSTANCE_CONFIG = {
         str
     ),
     'EMAIL_FROM_NAME': (
-        'AiaY',
+        'AIAY',
         'Default From name for emails',
         str
     ),
@@ -237,7 +237,7 @@ CONSTANCE_CONFIG = {
         str
     ),
     'SITE_NAME': (
-        'AiaY',
+        'AIAY',
         'Site name displayed in emails and notifications',
         str
     ),

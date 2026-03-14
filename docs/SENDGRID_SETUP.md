@@ -1,6 +1,6 @@
 # SendGrid Email Configuration Guide
 
-This guide explains how to configure and use SendGrid for email delivery in the Sign SA application.
+This guide explains how to configure and use SendGrid for email delivery in the AIAY application.
 
 ## Overview
 
@@ -24,7 +24,7 @@ The following settings are managed through Django Constance and can be updated v
 
 - **SENDGRID_API_KEY**: Your SendGrid API key
 - **EMAIL_FROM_ADDRESS**: Default sender email address (e.g., `noreply@sign-sa.net`)
-- **EMAIL_FROM_NAME**: Friendly name for the sender (e.g., `Sign SA`)
+- **EMAIL_FROM_NAME**: Friendly name for the sender (e.g., `AIAY`)
 
 ### 3. Production Settings
 
@@ -82,8 +82,8 @@ from api.email_utils import send_html_email
 
 send_html_email(
     subject="Welcome!",
-    text_content="Welcome to Sign SA!",
-    html_content="<h1>Welcome to Sign SA!</h1>",
+    text_content="Welcome to AIAY!",
+    html_content="<h1>Welcome to AIAY!</h1>",
     recipient_list=["user@example.com"]
 )
 ```
@@ -258,4 +258,4 @@ Example template structure:
 
 - SendGrid Documentation: https://docs.sendgrid.com/
 - Django Email Documentation: https://docs.djangoproject.com/en/stable/topics/email/
-- Sign SA Support: admin@sign-sa.net
+- AIAY Support: admin@sign-sa.net

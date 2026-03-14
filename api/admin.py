@@ -206,6 +206,6 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
 
 
 # Customize admin site header and title
-admin.site.site_header = "AiaY Admin"
-admin.site.site_title = "AiaY"
+admin.site.site_header = "AIAY Admin"
+admin.site.site_title = "AIAY"
 admin.site.index_title = "Dashboard"

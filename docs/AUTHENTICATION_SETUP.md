@@ -1,4 +1,4 @@
-# Authentication System Setup - Sign SA
+# Authentication System Setup - AIAY
 
 ## Summary of Changes
 
@@ -39,12 +39,12 @@ Beautiful modern login page with:
 - **Smooth animations** (slide up, fade in)
 
 ### 4. Base Template Updates (`templates/base.html`)
-- Changed title from "نظام الرسائل التحفيزية" to "Sign SA"
-- Changed brand name from "الرسائل التحفيزية" to "Sign SA"
+- Changed title from "نظام الرسائل التحفيزية" to "AIAY"
+- Changed brand name from "الرسائل التحفيزية" to "AIAY"
 - Updated logout link to use new logout view URL
 
 ### 5. JavaScript Updates (`static/js/main.js`)
-- Changed header comment from "MOTIVATIONAL MESSAGES DASHBOARD" to "SIGN SA DASHBOARD"
+- Changed header comment from "MOTIVATIONAL MESSAGES DASHBOARD" to "AIAY DASHBOARD"
 
 ### 6. Settings Updates
 
