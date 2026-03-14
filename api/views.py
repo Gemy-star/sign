@@ -324,16 +324,24 @@ class TrialManagementView(APIView):
         404: 'Not found',
     }
 ))
-class ScopeViewSet(viewsets.ReadOnlyModelViewSet):
+class ScopeViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for viewing scopes (life domains)
+    ViewSet for viewing and managing scopes (life domains)
 
-    list: Get all active scopes
-    retrieve: Get a specific scope by ID
+    list: Get all active scopes (anonymous allowed)
+    retrieve: Get a specific scope by ID (anonymous allowed)
+    create: Create a new scope (login required)
+    update: Update a scope (login required)
+    partial_update: Partially update a scope (login required)
+    destroy: Delete a scope (login required)
     """
     queryset = Scope.objects.filter(is_active=True)
     serializer_class = ScopeSerializer
-    permission_classes = [permissions.AllowAny]
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve', 'categories'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
         """Filter scopes by category if provided"""

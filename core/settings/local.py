@@ -9,7 +9,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '10.0.2.2']
 
 # Database
 # SQLite for local development
@@ -26,6 +26,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://localhost:8081",
+    "http://127.0.0.1:8081",
+    "http://localhost:8082",
+    "http://127.0.0.1:8082",
     "http://localhost",
     "http://127.0.0.1",
 ]
@@ -60,10 +64,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 INSTALLED_APPS += ['silk']
 MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
-SILKY_PYTHON_PROFILER = True
-SILKY_PYTHON_PROFILER_BINARY = False  # Disable binary profiler to avoid file issues
+SILKY_PYTHON_PROFILER = False
+SILKY_PYTHON_PROFILER_BINARY = False
 SILKY_PYTHON_PROFILER_RESULT_PATH = BASE_DIR / 'profiles'
-SILKY_META = True
+SILKY_META = False
 SILKY_INTERCEPT_PERCENT = 100  # Profile 100% of requests in development
 SILKY_MAX_REQUEST_BODY_SIZE = -1  # No limit on request body size
 SILKY_MAX_RESPONSE_BODY_SIZE = -1  # No limit on response body size
